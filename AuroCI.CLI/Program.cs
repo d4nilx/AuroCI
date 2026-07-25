@@ -1,32 +1,94 @@
 ﻿using AuroCI.Core.Templates;
 using Spectre.Console;
+using System.Linq;
+using System.IO;
 
-// Here it clears the screen
+// Here it clears everything on the screen to make it look nice 
 AnsiConsole.Clear();
 
-// Here it makes a big ASCII-logo
-AnsiConsole.Write(new FigletText("AuroCI")
-    .LeftJustified()
-    .Color(Color.SpringGreen3));
+// Logo of the CLI tool
+AnsiConsole.Write(new FigletText("AuroCI").Centered().Color(Color.Green));
 
-// Make some text info about system success and status
-AnsiConsole.Markup("[bold white]Hello it's AuroCI[/] - your tool to automate CI/CD pipelines and manage your projects with ease.");
-AnsiConsole.Markup("System status: [bold green]OK[/] - All systems are operational.\n");
+// Here some text to make it look fancy
+AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate CI/CD pipelines.");
+AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
-Console.WriteLine("\n[System] Testing bridge between CLI and Core...");
+string targetPath = string.Empty;
 
-// Here it calls method 
-string targetPath = Directory.GetCurrentDirectory(); 
-
-// Here it makes the example of out generator 
-var generator = new BasicTemplateGenerator();
-
-generator.Generate("AuroTestProject", targetPath);
-Console.WriteLine("[System] Project generated successfully.");
-
-// Making new rule to exit 
-var rule = new Rule("[bold grey]press any key to exit[/]");
-rule.Justification = Justify.Left;
-AnsiConsole.Write(rule);
-
-Console.ReadKey();
+    while (true)
+    {
+        // Selection menu
+         var selectionMode = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("How would you like to find the project?")
+                .PageSize(10)
+                .AddChoices(
+                    "Enter the path manually",
+                    "Detect project in current directory",
+                    "Exit"));
+    
+        // Exit button
+        if (selectionMode == "Exit")
+        {
+            AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+            break; 
+        }
+    
+        // Here we make logic if user choose 
+        if (selectionMode == "Enter the path manually")
+        {
+            targetPath = AnsiConsole.Ask<string>("What is the project path?");
+            if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
+            break;
+        }
+        else
+        {
+            var currentDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            bool goBackToMenu = false;
+        
+            // Cycle of the folders 
+            while (true)
+            {
+                AnsiConsole.Clear();
+            
+                var directories = Directory.GetDirectories(currentDir) .Select(Path.GetFileName) .Where(name => !name.StartsWith(".")) .ToList();
+            
+                // Our navigation buttons
+                directories.Insert(0, "✅ [green]Choose this directory[/]");
+                directories.Insert(1, "⬅️ [blue]Go back to menu[/]"); // Go back
+            
+                if (currentDir != "/") directories.Insert(2, "🔙 [yellow]Back (..)[/]");
+            
+                var selectedItem = AnsiConsole.Prompt(new SelectionPrompt<string>() 
+                    .Title($"[cyan]Current directory:[/] {currentDir}\n[grey]Use arrows and Enter to select[/]") 
+                    .PageSize(15) 
+                    .AddChoices(directories));
+            
+                if (selectedItem == "✅ [green]Choose this directory[/]")
+                {
+                    targetPath = currentDir; 
+                    break; 
+                }
+                else if (selectedItem == "⬅️ [blue]Go back to menu[/]")
+                {
+                    goBackToMenu = true;
+                    break; 
+                }
+                else if (selectedItem == "🔙 [yellow]Back (..)[/]")
+                {
+                    var parent = Directory.GetParent(currentDir);
+                    if (parent != null) currentDir = parent.FullName; 
+                }
+                else
+                {
+                    currentDir = Path.Combine(currentDir, selectedItem); 
+                }
+                if(!goBackToMenu && !string.IsNullOrEmpty(targetPath)) break;
+            }
+            if(!goBackToMenu && !string.IsNullOrEmpty(targetPath)) break;
+        }
+        if (!string.IsNullOrEmpty(targetPath))
+        {
+            AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
+        }
+    }
