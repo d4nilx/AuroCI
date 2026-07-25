@@ -2,6 +2,7 @@
 using Spectre.Console;
 using System.Linq;
 using System.IO;
+using AuroCI.Core.Detector;
 
 // Here it clears everything on the screen to make it look nice 
 AnsiConsole.Clear();
@@ -14,6 +15,9 @@ AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate
 AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
 string targetPath = string.Empty;
+var detector = new ProjectDetector();
+var config = detector.Detect(targetPath);
+AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
 
     while (true)
     {
