@@ -15,9 +15,6 @@ AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate
 AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
 string targetPath = string.Empty;
-var detector = new ProjectDetector();
-var config = detector.Detect(targetPath);
-AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
 
     while (true)
     {
@@ -96,3 +93,6 @@ AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
             AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
         }
     }
+    var detector = new ProjectDetector();
+    var config = detector.Detect(targetPath);
+    AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
