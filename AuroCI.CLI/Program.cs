@@ -68,7 +68,7 @@ string targetPath = string.Empty;
                     targetPath = currentDir; 
                     break; 
                 }
-                else if (selectedItem == "⬅️ [blue]Go back to menu[/]")
+                else if (selectedItem == "⬅️ [yellow]Go back to menu[/]")
                 {
                     goBackToMenu = true;
                     break; 

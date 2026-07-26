@@ -22,31 +22,27 @@ public class ProjectDetector : IProjectDetector
         // So here we will be looking for file with .csproj
         var csprojFile = Directory.GetFiles(path, "*.csproj").FirstOrDefault();
         
-        // If it finds any file called like boom
-        if (csprojFile != null)
+        if (csprojFile == null)
         {
-            config.ProjectType = "C#";
-            
-            // Here it takes first file available 
+            config.ProjectType = "Unknown";
+            return config;
+        }
+        
+        // If it finds any file called like boom
+        try 
+        {
             var csprojPath = csprojFile;
-        
-            //Here make it read full file which it finds 
             var fileContent = File.ReadAllText(csprojPath.ToString());
-        
-            // Here it detects the MAUI project
+    
             if (fileContent.Contains("<UseMaui>true</UseMaui>")) config.ProjectType = "Maui";
-        
-            // Here it detects the web project 
             else if (fileContent.Contains("Microsoft.NET.Sdk.Web")) config.ProjectType = "Web";
-        
-            // Here it detects console projects 
-            else if (fileContent.Contains("<OutputType>Exe</OutputType>") || fileContent.Contains("<OutputType>WinExe</OutputType>")) 
-            {
-                config.ProjectType = "Console";
-            }
-        
-            // In case it's not any of the above it will be unknown
+            else if (fileContent.Contains("<OutputType>Exe</OutputType>") || fileContent.Contains("<OutputType>WinExe</OutputType>")) config.ProjectType = "Console";
             else config.ProjectType = "Unknown";
+        }
+        catch (Exception)
+        {
+            // Якщо файл не читається (немає прав і т.д.), просто здаємося і кажемо, що тип невідомий
+            config.ProjectType = "Unknown";
         }
         
         return config;
