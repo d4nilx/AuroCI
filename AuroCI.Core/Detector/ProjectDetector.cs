@@ -41,7 +41,7 @@ public class ProjectDetector : IProjectDetector
         }
         catch (Exception)
         {
-            // Якщо файл не читається (немає прав і т.д.), просто здаємося і кажемо, що тип невідомий
+            // If the file can't be read (permissions, etc.), fall back to Unknown
             config.ProjectType = "Unknown";
         }
         

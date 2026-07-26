@@ -1,4 +1,5 @@
 
+
 namespace AuroCI.Core.Interfaces;
 
 public interface ITemplateGenerator
