@@ -1,7 +1,5 @@
 ﻿using AuroCI.Core.Templates;
 using Spectre.Console;
-using System.Linq;
-using System.IO;
 using AuroCI.Core.Detector;
 
 // Here it clears everything on the screen to make it look nice 
@@ -56,7 +54,7 @@ string targetPath = string.Empty;
             
                 // Our navigation buttons
                 directories.Insert(0, "✅ [green]Choose this directory[/]");
-                directories.Insert(1, "⬅️ [blue]Go back to menu[/]"); // Go back
+                directories.Insert(1, "⬅️ [yellow]Go back to menu[/]"); // Go back
             
                 if (currentDir != "/") directories.Insert(2, "🔙 [yellow]Back (..)[/]");
             
@@ -92,6 +90,10 @@ string targetPath = string.Empty;
         {
             AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
         }
+    }
+    if (string.IsNullOrWhiteSpace(targetPath))
+    {
+        return; 
     }
     var detector = new ProjectDetector();
     var config = detector.Detect(targetPath);

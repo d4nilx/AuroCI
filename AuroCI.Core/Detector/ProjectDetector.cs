@@ -1,5 +1,3 @@
-using System.IO;
-using System.Linq;
 using AuroCI.Core.Models;
 
 namespace AuroCI.Core.Detector;
@@ -42,7 +40,10 @@ public class ProjectDetector : IProjectDetector
             else if (fileContent.Contains("Microsoft.NET.Sdk.Web")) config.ProjectType = "Web";
         
             // Here it detects console projects 
-            else if (fileContent.Contains("Microsoft.NET.Sdk")) config.ProjectType = "Console";
+            else if (fileContent.Contains("<OutputType>Exe</OutputType>") || fileContent.Contains("<OutputType>WinExe</OutputType>")) 
+            {
+                config.ProjectType = "Console";
+            }
         
             // In case it's not any of the above it will be unknown
             else config.ProjectType = "Unknown";
