@@ -98,3 +98,22 @@ string targetPath = string.Empty;
     var detector = new ProjectDetector();
     var config = detector.Detect(targetPath);
     AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
+    var confirmed = AnsiConsole.Confirm("Do you want to generate CI/CD files?", false);
+    if (!confirmed) return;
+    
+    // Here it choose which template was detected in project
+    switch(config.ProjectType)
+    {
+        case "Maui":
+            // Calling Maui
+            break;
+        case "Web":
+            // Calling Web
+            break;
+        case "Console":
+            // Calling Console
+            break;
+        default:
+            // unknown type
+            break;
+    }
