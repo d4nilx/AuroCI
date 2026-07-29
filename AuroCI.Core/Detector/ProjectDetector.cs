@@ -13,6 +13,10 @@ public class ProjectDetector : IProjectDetector
     {
         var config = new ProjectConfig { ProjectPath = path };
         
+        config.ProjectName = Path.GetFileName(path);
+        
+        path = path.Trim().Replace("\\ ", " ");
+        
         // Here it checks if in general this project exists on the device 
         if (!Directory.Exists(path))
         {

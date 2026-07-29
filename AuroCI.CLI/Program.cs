@@ -1,6 +1,7 @@
 ﻿using AuroCI.Core.Templates;
 using Spectre.Console;
 using AuroCI.Core.Detector;
+using static AuroCI.Core.Templates.MauiTemplate;
 
 // Here it clears everything on the screen to make it look nice 
 AnsiConsole.Clear();
@@ -100,12 +101,20 @@ string targetPath = string.Empty;
     AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
     var confirmed = AnsiConsole.Confirm("Do you want to generate CI/CD files?", false);
     if (!confirmed) return;
-    
+
     // Here it choose which template was detected in project
     switch(config.ProjectType)
     {
         case "Maui":
-            // Calling Maui
+            try
+            {
+                new MauiTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD maui-ci.yml[/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Error generating MAUI template: {ex.Message}[/]");
+            }
             break;
         case "Web":
             // Calling Web
@@ -117,3 +126,4 @@ string targetPath = string.Empty;
             // unknown type
             break;
     }
+    AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
