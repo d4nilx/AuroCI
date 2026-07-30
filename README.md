@@ -75,7 +75,7 @@ AuroCI.sln
 - [x] Interactive CLI UI with Spectre.Console
 - [x] MAUI Template (iOS/macOS & Android/Windows runners)
 - [ ] ASP.NET Core Web App Template
-- [ ] .NET Console App Template
+- [x] .NET Console App Template
 - [ ] Global .NET Tool installation support (dotnet tool install -g)
 - [ ] Add support for the CI/CD pipeline for other languages (Node.js, Python, etc.)
 
