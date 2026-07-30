@@ -120,7 +120,15 @@ string targetPath = string.Empty;
             // Calling Web
             break;
         case "Console":
-            // Calling Console
+            try
+            {
+                new ConsoleTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD console-ci.yml[/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Error generating Console template: {ex.Message}[/]");
+            }
             break;
         default:
             // unknown type
