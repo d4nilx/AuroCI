@@ -117,7 +117,15 @@ string targetPath = string.Empty;
             }
             break;
         case "Web":
-            // Calling Web
+            try
+            {
+                new WebTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD web-ci.yml[/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Error generating Web template: {ex.Message}[/]");
+            }
             break;
         case "Console":
             try
@@ -131,7 +139,45 @@ string targetPath = string.Empty;
             }
             break;
         default:
-            // unknown type
+            // If we can't detect the project type, we can ask the user to choose a template manually
+            AnsiConsole.MarkupLine("[yellow]Project type not recognized. Please choose a template manually.[/]");
+
+            var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title($"[bold green]Choose project type:[/]")
+                .PageSize(5)
+                .HighlightStyle(new Style(foreground: Color.Cyan1))
+                .AddChoices(new [] 
+                    {
+                        "🌐 ASP.NET Core Web",
+                        "🖥️ .NET Console App",
+                        "📱 .NET MAUI",
+                        "❌ Exit"
+                    }));
+            try
+            {
+                switch (choice)
+                {
+                    case "🌐 ASP.NET Core Web":
+                        new WebTemplate().Generate(config.ProjectName, targetPath);
+                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD web-ci.yml[/]");
+                        break;
+                    case "🖥️ .NET Console App":
+                        new ConsoleTemplate().Generate(config.ProjectName, targetPath);
+                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD console-ci.yml[/]");
+                        break;
+                    case "📱 .NET MAUI":
+                        new MauiTemplate().Generate(config.ProjectName, targetPath);
+                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD maui-ci.yml[/]");
+                        break;
+                    case "❌ Exit":
+                        AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Error generating template: {ex.Message}[/]");
+            }
             break;
     }
     AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
