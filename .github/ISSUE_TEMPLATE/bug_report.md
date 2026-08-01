@@ -1,36 +1,27 @@
-## Issue: Bug report
-
-Create a report to help us improve
-
---------
+---
+name: Bug report
+about: Create a report to help us improve AuroCI
+title: '[BUG] '
+labels: bug
+assignees: d4nilx
+---
 
 **Describe the bug**
 A clear and concise description of what the bug is.
 
---------
-
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+1. Run command '...'
+2. Select '...'
+3. See error '...'
 
 **Expected behavior**
-
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**Screenshots / Logs**
+If applicable, add screenshots or console output to help explain your problem.
 
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
-- OS: [e.g. iOS]
-- Browser [e.g. chrome, safari]
-- Version [e.g. 22]
-
---------
-
-**Additional context**
-
-Add any other context about the problem here.
+**Environment:**
+- OS: [e.g., macOS, Windows, Linux]
+- .NET Version: [e.g., 8.0, 9.0]
+- AuroCI Version: [e.g., 1.0.1]
