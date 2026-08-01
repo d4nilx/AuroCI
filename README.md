@@ -80,6 +80,20 @@ AuroCI.sln
 - [x] Global .NET Tool installation support (dotnet tool install -g)
 - [ ] Add support for the CI/CD pipeline for other languages (Node.js, Python, etc.)
 
+## 🚀 Quick Start
+
+**AuroCI** is officially available as a .NET Global Tool on NuGet! You can install it globally on macOS, Linux, or Windows with a single command:
+
+```bash
+dotnet tool install -g AuroCI
+```
+
+Once installed, simply invoke the tool in your terminal from any project directory:
+
+```bash
+aci
+```
+
 ## License
 Distributed under the MIT License.
 

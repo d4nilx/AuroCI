@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.57.2" />
+    <None Include="auroci-logo.png" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -14,9 +16,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <ToolCommandName>auroci</ToolCommandName>
     <PackageId>AuroCI</PackageId>
-    <Version>1.0.0</Version>
+    <PackageIcon>auroci-logo.png</PackageIcon>
+    <Version>1.0.2</Version>
 
     <Authors>Daniil Zhdanov</Authors>
     <Description>A fast, self-contained terminal utility to automatically generate cross-platform CI/CD pipelines.</Description>
@@ -26,6 +28,9 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>aci</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
 </Project>
