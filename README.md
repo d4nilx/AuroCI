@@ -94,6 +94,22 @@ Once installed, simply invoke the tool in your terminal from any project directo
 aci
 ```
 
+## Screenshots
+- Main screen:
+  
+  <img width="544" height="448" alt="Screenshot 2026-08-01 at 15 40 04" src="https://github.com/user-attachments/assets/c529440b-99f8-4a2f-9714-ffcc00ded8aa" />
+
+- Creating page:
+
+  <img width="556" height="426" alt="Screenshot 2026-08-01 at 15 41 09" src="https://github.com/user-attachments/assets/f8d2bded-442b-4705-afae-fd4579063724" />
+
+- Conformation of creating:
+
+  <img width="546" height="424" alt="Screenshot 2026-08-01 at 15 41 17" src="https://github.com/user-attachments/assets/08ff2a41-a373-440c-8a32-e09e8f8242dd" />
+
+
+
+
 ## License
 Distributed under the MIT License.
 
