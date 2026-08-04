@@ -196,6 +196,20 @@ string targetPath = string.Empty;
             } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
             break;
         
+        case "ClassLibrary":
+            try {
+                new ClassLibraryTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD classlib-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
+
+        case "Worker":
+            try {
+                new WorkerTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD worker-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
+        
         default:
             // If we can't detect the project type, we can ask the user to choose a template manually
             AnsiConsole.MarkupLine("[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
@@ -229,6 +243,8 @@ string targetPath = string.Empty;
                         "🪟 WPF",
                         "🖼️ WinForms",
                         "⚛️ Blazor WASM",
+                        "📚  ClassLibrary",
+                        "💻  Worker",
                         "❌ Exit"
                     }));
             try
@@ -272,6 +288,19 @@ string targetPath = string.Empty;
                         try {
                             new BlazorTemplate().Generate(config.ProjectName, targetPath);
                             AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD blazor-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+                        break;
+                    case "ClassLibrary":
+                        try {
+                            new ClassLibraryTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD classlib-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+                        break;
+
+                    case "Worker":
+                        try {
+                            new WorkerTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD worker-ci.yml[/]");
                         } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
                         break;
                     case "❌ Exit":
