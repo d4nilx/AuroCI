@@ -155,6 +155,33 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating Console template: {ex.Message}[/]");
             }
             break;
+        case "Avalonia":
+            try {
+                new AvaloniaTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD avalonia-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
+
+        case "WPF":
+            try {
+                new WpfTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD wpf-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
+
+        case "WinForms":
+            try {
+                new WinFormsTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD winforms-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
+
+        case "BlazorWASM":
+            try {
+                new BlazorTemplate().Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD blazor-ci.yml[/]");
+            } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+            break;
         
         default:
             // If we can't detect the project type, we can ask the user to choose a template manually
@@ -185,6 +212,10 @@ string targetPath = string.Empty;
                         "🌐 ASP.NET Core Web",
                         "🖥️ .NET Console App",
                         "📱 .NET MAUI",
+                        "🎨 Avalonia UI",
+                        "🪟 WPF",
+                        "🖼️ WinForms",
+                        "⚛️ Blazor WASM",
                         "❌ Exit"
                     }));
             try
@@ -202,6 +233,33 @@ string targetPath = string.Empty;
                     case "📱 .NET MAUI":
                         new MauiTemplate().Generate(config.ProjectName, targetPath);
                         AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD maui-ci.yml[/]");
+                        break;
+                    case "🎨 Avalonia UI":
+                        try {
+                            new AvaloniaTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD avalonia-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+                        break;
+
+                    case "🪟 WPF":
+                        try {
+                            new WpfTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD wpf-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+                        break;
+
+                    case "🖼️ WinForms":
+                        try {
+                            new WinFormsTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD winforms-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
+                        break;
+
+                    case "⚛️ Blazor WASM":
+                        try {
+                            new BlazorTemplate().Generate(config.ProjectName, targetPath);
+                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD blazor-ci.yml[/]");
+                        } catch (Exception ex) { AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]"); }
                         break;
                     case "❌ Exit":
                         AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");

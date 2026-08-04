@@ -9,43 +9,53 @@ public interface IProjectDetector
 
 public class ProjectDetector : IProjectDetector
 {
+    private readonly (string Signature, string Type)[] _projectSignatures = 
+    {
+        ("<UseMaui>true</UseMaui>", "Maui"),
+        ("Avalonia", "Avalonia"), 
+        ("<UseWPF>true</UseWPF>", "WPF"),
+        ("<UseWindowsForms>true</UseWindowsForms>", "WinForms"),
+        ("Microsoft.AspNetCore.Components.WebAssembly", "BlazorWASM"),
+        ("Microsoft.NET.Sdk.Web", "Web"),
+        ("<OutputType>Exe</OutputType>", "Console"),
+        ("<OutputType>WinExe</OutputType>", "Console") 
+    };
+
     public ProjectConfig Detect(string path)
     {
-        var config = new ProjectConfig { ProjectPath = path };
+        var config = new ProjectConfig { ProjectPath = path, ProjectType = "Unknown" };
         
         config.ProjectName = Path.GetFileName(path);
         
         path = path.Trim().Replace("\\ ", " ");
         
-        // Here it checks if in general this project exists on the device 
         if (!Directory.Exists(path))
         {
             return config;
         }
         
-        // So here we will be looking for file with .csproj
         var csprojFile = Directory.GetFiles(path, "*.csproj").FirstOrDefault();
         
         if (csprojFile == null)
         {
-            config.ProjectType = "Unknown";
-            return config;
+            return config; 
         }
         
-        // If it finds any file called like boom
         try 
         {
-            var csprojPath = csprojFile;
-            var fileContent = File.ReadAllText(csprojPath.ToString());
+            var fileContent = File.ReadAllText(csprojFile);
     
-            if (fileContent.Contains("<UseMaui>true</UseMaui>")) config.ProjectType = "Maui";
-            else if (fileContent.Contains("Microsoft.NET.Sdk.Web")) config.ProjectType = "Web";
-            else if (fileContent.Contains("<OutputType>Exe</OutputType>") || fileContent.Contains("<OutputType>WinExe</OutputType>")) config.ProjectType = "Console";
-            else config.ProjectType = "Unknown";
+            foreach (var rule in _projectSignatures)
+            {
+                if (fileContent.Contains(rule.Signature))
+                {
+                    config.ProjectType = rule.Type;
+                    return config;
+                }
+            }
         }
         catch (Exception)
         {
-            // If the file can't be read (permissions, etc.), fall back to Unknown
             config.ProjectType = "Unknown";
         }
         
