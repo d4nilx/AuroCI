@@ -39,6 +39,17 @@ string targetPath = string.Empty;
         {
             targetPath = AnsiConsole.Ask<string>("What is the project path?");
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
+            
+            // NEW SAFETY SYSTEM for manual path
+            string fullPath = Path.GetFullPath(targetPath);
+            if (!Directory.Exists(fullPath))
+            {
+                AnsiConsole.MarkupLine($"[bold red]Directory not found: {fullPath}[/]");
+                AnsiConsole.MarkupLine($"[grey]Please touch any key to try again[/]");
+                Console.ReadKey();
+                continue; // Here it goes back, so user can try again
+            }
+            
             break;
         }
         else
@@ -116,6 +127,7 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating MAUI template: {ex.Message}[/]");
             }
             break;
+        
         case "Web":
             try
             {
@@ -127,6 +139,7 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating Web template: {ex.Message}[/]");
             }
             break;
+        
         case "Console":
             try
             {
@@ -138,9 +151,14 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating Console template: {ex.Message}[/]");
             }
             break;
+        
         default:
             // If we can't detect the project type, we can ask the user to choose a template manually
-            AnsiConsole.MarkupLine("[yellow]Project type not recognized. Please choose a template manually.[/]");
+            AnsiConsole.MarkupLine("[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
+            var forceConfirm = AnsiConsole.Confirm("Do you want to generate a template manually?", false);
+            
+            if (!forceConfirm) return;
+            AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
 
             var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title($"[bold green]Choose project type:[/]")
