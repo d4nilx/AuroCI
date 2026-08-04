@@ -63,8 +63,22 @@ string targetPath = string.Empty;
             while (true)
             {
                 AnsiConsole.Clear();
-            
-                var directories = Directory.GetDirectories(currentDir) .Select(Path.GetFileName) .Where(name => !name.StartsWith(".")) .ToList();
+                
+                List<string> directories = new();
+
+                try
+                {
+                    directories = Directory.GetDirectories(currentDir).Select(Path.GetFileName)
+                        .Where(name => !name.StartsWith(".")).ToList();
+                }
+                catch
+                {
+                    AnsiConsole.MarkupLine("[red]No access to this directory.[/]");
+                    Console.ReadKey();
+                    var parent = Directory.GetParent(currentDir);
+                    if (parent != null) currentDir = parent.FullName;
+                    continue;
+                }
             
                 // Our navigation buttons
                 directories.Insert(0, "✅ [green]Choose this directory[/]");
