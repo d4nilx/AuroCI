@@ -2,6 +2,11 @@
 
 > A smart, interactive CLI tool for automated CI/CD pipeline generation — because writing YAML by hand is so 2020.
 
+[![NuGet Version](https://img.shields.io/nuget/v/AuroCI?style=flat-square&color=00F2FF&label=nuget)](https://www.nuget.org/packages/AuroCI)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/AuroCI?style=flat-square&color=32D74B&label=downloads)](https://www.nuget.org/packages/AuroCI)
+[![CI](https://img.shields.io/github/actions/workflow/status/d4nilx/AuroCI/dotnet.yml?style=flat-square&label=CI)](https://github.com/d4nilx/AuroCI/actions)
+[![Stars](https://img.shields.io/github/stars/d4nilx/AuroCI?style=flat-square&color=FFD60A)](https://github.com/d4nilx/AuroCI/stargazers)
+[![Visitors](https://hits.sh/github.com/d4nilx/AuroCI.svg?style=flat-square&label=visitors&color=orange)](https://hits.sh/github.com/d4nilx/AuroCI/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-32D74B?style=flat-square)](https://github.com/d4nilx/AuroCI)
 [![.NET](https://img.shields.io/badge/.NET-10.0-00F2FF?style=flat-square)](https://dotnet.microsoft.com)
 
@@ -9,46 +14,55 @@
 
 ## 📌 About
 
-**AuroCI** is a modern Command Line Interface (CLI) tool designed to eliminate the boilerplate of setting up GitHub Actions. It automatically scans your directory, detects the underlying .NET project type (MAUI, Web, or Console), and generates a fully configured, multi-platform CI/CD workflow instantly.
+**AuroCI** is a modern CLI tool that eliminates the boilerplate of setting up GitHub Actions. It automatically scans your project directory, detects the .NET project type, and generates a fully configured multi-platform CI/CD workflow in seconds.
 
-Built with an interface-driven architecture and a beautiful terminal UI, making DevOps automation accessible and visually pleasing.
+No config files. No YAML knowledge required. Just run `aci` and you're done.
 
 ### 🌟 Features
 
-- 🔍 **Smart Auto-Detection** — parses `.csproj` files to identify your framework effortlessly.
-- 🛠 **Zero Configuration** — generates complete `.github/workflows/` YAML files with one click.
-- 🍎 **Cross-Platform CI/CD** — automatically configures multi-OS builds (e.g., Windows for Android, macOS for iOS in MAUI).
-- 🎨 **Beautiful UI** — interactive terminal experience powered by Spectre.Console (no more boring text logs!).
-- 🛡️ **Defensive Design** — safe file operations, interactive confirmations, and robust exception handling.
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| UI Framework | Spectre.Console |
-| Language | C# |
-| Architecture | Interface-driven (Factory Pattern) |
-| File Parsing | System.IO / String manipulation |
-| IDE | JetBrains Rider |
+- 🔍 **Smart Auto-Detection** — parses `.csproj` files to identify your framework automatically.
+- 🛠 **Zero Configuration** — generates complete `.github/workflows/` YAML files instantly.
+- 🌐 **Broad Framework Support** — covers 90%+ of the .NET ecosystem out of the box.
+- 🍎 **Cross-Platform CI/CD** — automatically configures multi-OS matrix builds (Ubuntu, macOS, Windows).
+- 🎨 **Beautiful Terminal UI** — interactive experience powered by Spectre.Console.
+- 🛡️ **Defensive Design** — safe file operations, interactive confirmations, and robust error handling.
+- 🔧 **Manual Fallback** — unknown project type? Choose a template manually from an interactive menu.
 
 ---
 
 ## 🚀 Quick Start
 
-### Requirements
-
-- [.NET SDK](https://dotnet.microsoft.com/download)
-- A terminal (macOS Terminal, iTerm, Windows Terminal)
-
-### Build & Run
+**AuroCI** is available as a .NET Global Tool on NuGet. Install it globally with a single command:
 
 ```bash
-git clone [https://github.com/d4nilx/AuroCI.git](https://github.com/d4nilx/AuroCI.git)
-cd AuroCI
-dotnet run --project AuroCI.CLI 
+dotnet tool install -g AuroCI
 ```
+
+Then run it from any .NET project directory:
+
+```bash
+aci
+```
+
+That's it. AuroCI will detect your project type and generate the CI/CD pipeline automatically.
+
+---
+
+## 📦 Supported Project Types
+
+| Project Type | Detected By | CI Runners |
+|---|---|---|
+| ASP.NET Core Web | `Microsoft.NET.Sdk.Web` | Ubuntu, macOS, Windows |
+| .NET Console App | `<OutputType>Exe</OutputType>` | Ubuntu, macOS, Windows |
+| .NET MAUI | `<UseMaui>true</UseMaui>` | macOS (iOS), Windows (Android) |
+| Avalonia UI | `Avalonia` reference | Ubuntu, macOS, Windows |
+| WPF | `<UseWPF>true</UseWPF>` | Windows only |
+| WinForms | `<UseWindowsForms>true</UseWindowsForms>` | Windows only |
+| Blazor WASM | `WebAssembly` reference | Ubuntu, macOS, Windows |
+| Class Library | SDK-style, no `OutputType` | Ubuntu, macOS, Windows |
+| Worker Service | `Microsoft.NET.Sdk.Worker` | Ubuntu|
+
+---
 
 ## 🏗️ Project Structure
 
@@ -62,59 +76,87 @@ AuroCI.sln
 │   ├── Models/
 │   │   └── ProjectConfig.cs
 │   └── Templates/
-│       └── MauiTemplate.cs
-│       └── WebTemplate.cs
-│       └── ConsoleTemplate.cs
-└── AuroCI.CLI/                 # UI layer — terminal interface & commands
-    ├── Commands/
+│       ├── AvaloniaTemplate.cs
+│       ├── BlazorTemplate.cs
+│       ├── ClassLibraryTemplate.cs
+│       ├── ConsoleTemplate.cs
+│       ├── MauiTemplate.cs
+│       ├── WebTemplate.cs
+│       ├── WinFormsTemplate.cs
+│       ├── WorkerTemplate.cs
+│       └── WpfTemplate.cs
+└── AuroCI.CLI/                 # UI layer — terminal interface
     └── Program.cs
 ```
 
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | C# / .NET 10 |
+| Terminal UI | Spectre.Console |
+| Architecture | Interface-driven |
+| File Parsing | System.IO |
+| IDE | JetBrains Rider |
+
+---
+
+## 🖥️ Screenshots
+
+**Main screen:**
+
+<img width="544" height="448" alt="Main screen" src="https://github.com/user-attachments/assets/c529440b-99f8-4a2f-9714-ffcc00ded8aa" />
+
+**Project browser:**
+
+<img width="556" height="426" alt="Project browser" src="https://github.com/user-attachments/assets/f8d2bded-442b-4705-afae-fd4579063724" />
+
+**Confirmation prompt:**
+
+<img width="546" height="424" alt="Confirmation" src="https://github.com/user-attachments/assets/08ff2a41-a373-440c-8a32-e09e8f8242dd" />
+
+---
+
 ## 🗺️ Roadmap
 
-- [x] Basic project detection engine
+- [x] Smart project detection engine
 - [x] Interactive CLI UI with Spectre.Console
-- [x] MAUI Template (iOS/macOS & Android/Windows runners)
-- [x] ASP.NET Core Web App Template
-- [x] .NET Console App Template
-- [x] Global .NET Tool installation support (dotnet tool install -g)
-- [ ] Add support for the CI/CD pipeline for other languages (Node.js, Python, etc.)
+- [x] ASP.NET Core Web template
+- [x] .NET Console App template
+- [x] .NET MAUI template (iOS/macOS & Android/Windows)
+- [x] Avalonia UI template
+- [x] WPF template
+- [x] WinForms template
+- [x] Blazor WASM template
+- [x] Class Library template
+- [x] Worker Service template
+- [x] Global .NET Tool on NuGet (`dotnet tool install -g AuroCI`)
+- [x] Manual template fallback for undetected projects
+- [ ] Support for other languages (Node.js, Python, Go)
+- [ ] Custom template configuration via `auroci.json`
 
-## 🚀 Quick Start
+---
 
-**AuroCI** is officially available as a .NET Global Tool on NuGet! You can install it globally on macOS, Linux, or Windows with a single command:
+## 🔨 Build from Source
 
 ```bash
-dotnet tool install -g AuroCI
+git clone https://github.com/d4nilx/AuroCI.git
+cd AuroCI
+dotnet run --project AuroCI.CLI
 ```
 
-Once installed, simply invoke the tool in your terminal from any project directory:
+---
 
-```bash
-aci
-```
+## 📄 License
 
-## Screenshots
-- Main screen:
-  
-  <img width="544" height="448" alt="Screenshot 2026-08-01 at 15 40 04" src="https://github.com/user-attachments/assets/c529440b-99f8-4a2f-9714-ffcc00ded8aa" />
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
-- Creating page:
-
-  <img width="556" height="426" alt="Screenshot 2026-08-01 at 15 41 09" src="https://github.com/user-attachments/assets/f8d2bded-442b-4705-afae-fd4579063724" />
-
-- Conformation of creating:
-
-  <img width="546" height="424" alt="Screenshot 2026-08-01 at 15 41 17" src="https://github.com/user-attachments/assets/08ff2a41-a373-440c-8a32-e09e8f8242dd" />
-
-
-
-
-## License
-Distributed under the MIT License.
+---
 
 ## ✉️ Contact
 
 **Daniil Zdanov** — [@d4nilx](https://github.com/d4nilx)
 
-Project: [github.com/d4nilx/AuroCI](https://github.com/d4nilx/AuroCI) 
+Project: [github.com/d4nilx/AuroCI](https://github.com/d4nilx/AuroCI)
