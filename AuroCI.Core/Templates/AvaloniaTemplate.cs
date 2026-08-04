@@ -14,8 +14,14 @@ on:
     branches: [ ""main"" ]
 
 jobs:
-    build: 
-        runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        # To turn off on of the OS simply delete it.
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+        runs-on: ${{{{ matrix.os }}}}
+
         steps:
         - name: Checkout Code
           uses: actions/checkout@v4
