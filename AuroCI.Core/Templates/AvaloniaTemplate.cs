@@ -2,11 +2,11 @@ using System.IO;
 
 namespace AuroCI.Core.Templates;
 
-public class AvoloniaTemplate
+public class AvaloniaTemplate
 {
     public void Generate(string projectName, string targetDirectory)
     {
-        var yaml = $@" name: {projectName} Avalonia CI
+        var yaml = $@"name: {projectName} Avalonia CI
 on:
   push:
     branches: [ ""main"" ]
@@ -38,7 +38,7 @@ jobs:
         var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
         Directory.CreateDirectory(workflowsDir);
         
-        File.WriteAllText(Path.Combine(workflowsDir, "avolonia-ci.yml"), yaml);
+        File.WriteAllText(Path.Combine(workflowsDir, "avalonia-ci.yml"), yaml);
     }
 }
 
