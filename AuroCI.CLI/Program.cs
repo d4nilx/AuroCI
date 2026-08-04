@@ -3,7 +3,10 @@ using Spectre.Console;
 using AuroCI.Core.Detector;
 using static AuroCI.Core.Templates.MauiTemplate;
 
-// Here it clears everything on the screen to make it look nice 
+// Main program cycle
+while (true)
+{
+    // Here it clears everything on the screen to make it look nice 
 AnsiConsole.Clear();
 
 // Logo of the CLI tool
@@ -31,7 +34,7 @@ string targetPath = string.Empty;
         if (selectionMode == "Exit")
         {
             AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
-            break; 
+            return; 
         }
     
         // Here we make logic if user choose 
@@ -39,6 +42,17 @@ string targetPath = string.Empty;
         {
             targetPath = AnsiConsole.Ask<string>("What is the project path?");
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
+            
+            // NEW SAFETY SYSTEM for manual path
+            string fullPath = Path.GetFullPath(targetPath);
+            if (!Directory.Exists(fullPath))
+            {
+                AnsiConsole.MarkupLine($"[bold red]Directory not found: {fullPath}[/]");
+                AnsiConsole.MarkupLine($"[grey]Please touch any key to try again[/]");
+                Console.ReadKey();
+                continue; // Here it goes back, so user can try again
+            }
+            
             break;
         }
         else
@@ -92,15 +106,16 @@ string targetPath = string.Empty;
             AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
         }
     }
-    if (string.IsNullOrWhiteSpace(targetPath))
-    {
-        return; 
-    }
+    if (string.IsNullOrWhiteSpace(targetPath)) return;
+    
     var detector = new ProjectDetector();
     var config = detector.Detect(targetPath);
     AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
     var confirmed = AnsiConsole.Confirm("Do you want to generate CI/CD files?", false);
-    if (!confirmed) return;
+    if (!confirmed)
+    {
+        continue;
+    }
 
     // Here it choose which template was detected in project
     switch(config.ProjectType)
@@ -116,6 +131,7 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating MAUI template: {ex.Message}[/]");
             }
             break;
+        
         case "Web":
             try
             {
@@ -127,6 +143,7 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating Web template: {ex.Message}[/]");
             }
             break;
+        
         case "Console":
             try
             {
@@ -138,9 +155,26 @@ string targetPath = string.Empty;
                 AnsiConsole.MarkupLine($"[red]Error generating Console template: {ex.Message}[/]");
             }
             break;
+        
         default:
             // If we can't detect the project type, we can ask the user to choose a template manually
-            AnsiConsole.MarkupLine("[yellow]Project type not recognized. Please choose a template manually.[/]");
+            AnsiConsole.MarkupLine("[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
+            var forceConfirm = AnsiConsole.Confirm("Do you want to generate a template manually?", false);
+
+            if (!forceConfirm)
+            {
+                var stay = AnsiConsole.Confirm("Do you want to stay in the menu to choose another project?", false);
+                if (stay)
+                {
+                    continue; // Go back to the main menu
+                }
+                else
+                {
+                    AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+                    return; // Exit the application
+                }
+            }
+            AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
 
             var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                 .Title($"[bold green]Choose project type:[/]")
@@ -181,3 +215,11 @@ string targetPath = string.Empty;
             break;
     }
     AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
+    
+    var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
+    if (!doAnother)
+    {
+        AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+        break;
+    }
+}
