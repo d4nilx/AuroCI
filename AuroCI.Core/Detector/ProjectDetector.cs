@@ -18,7 +18,9 @@ public class ProjectDetector : IProjectDetector
         ("Microsoft.AspNetCore.Components.WebAssembly", "BlazorWASM"),
         ("Microsoft.NET.Sdk.Web", "Web"),
         ("<OutputType>Exe</OutputType>", "Console"),
-        ("<OutputType>WinExe</OutputType>", "Console") 
+        ("<OutputType>WinExe</OutputType>", "Console"),
+        ("Sdk=\"Microsoft.NET.Sdk.Worker\"", "Worker"),
+        ("<OutputType>Library</OutputType>", "Library"),
     };
 
     public ProjectConfig Detect(string path)
