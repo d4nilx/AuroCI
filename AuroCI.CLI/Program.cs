@@ -1,7 +1,6 @@
 ﻿using AuroCI.Core.Templates;
 using Spectre.Console;
 using AuroCI.Core.Detector;
-using static AuroCI.Core.Templates.MauiTemplate;
 
 // Main program cycle
 while (true)
