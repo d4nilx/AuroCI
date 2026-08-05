@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 120" width="100%">
+  <!-- Ліва лінія -->
+  <line x1="15%" y1="50%" x2="35%" y2="50%" stroke="#4364F7" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Текст логотипу -->
+  <text x="50%" y="62%" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="64" font-weight="900" text-anchor="middle" letter-spacing="1">
+    <tspan fill="#4364F7">Auro</tspan><tspan fill="#0052D4">CI</tspan>
+  </text>
+
+  <!-- Права лінія -->
+  <line x1="65%" y1="50%" x2="85%" y2="50%" stroke="#4364F7" stroke-width="2" stroke-linecap="round" />
+</svg>

@@ -1,4 +1,6 @@
-# ⚡ AuroCI
+<p align="center">
+  <img src=".github/assets/header.svg" alt="AuroCI Logo">
+</p>
 
 > A smart, interactive CLI tool for automated CI/CD pipeline generation — because writing YAML by hand is so 2020.
 
@@ -153,9 +155,4 @@ dotnet run --project AuroCI.CLI
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
-
-## ✉️ Contact
-
-**Daniil Zdanov** — [@d4nilx](https://github.com/d4nilx)
-
-Project: [github.com/d4nilx/AuroCI](https://github.com/d4nilx/AuroCI)
+![footer](https://capsule-render.vercel.app/api?section=footer&height=150&type=soft&color=0:0052D4,50:4364F7,100:6FB1FC&text=Built%20by%20d4nilx&fontSize=45&fontColor=ffffff)
