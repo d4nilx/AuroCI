@@ -4,7 +4,6 @@
 
 [![NuGet Version](https://img.shields.io/nuget/v/AuroCI?style=flat-square&color=00F2FF&label=nuget)](https://www.nuget.org/packages/AuroCI)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/AuroCI?style=flat-square&color=32D74B&label=downloads)](https://www.nuget.org/packages/AuroCI)
-[![CI](https://img.shields.io/github/actions/workflow/status/d4nilx/AuroCI/dotnet.yml?style=flat-square&label=CI)](https://github.com/d4nilx/AuroCI/actions)
 [![Stars](https://img.shields.io/github/stars/d4nilx/AuroCI?style=flat-square&color=FFD60A)](https://github.com/d4nilx/AuroCI/stargazers)
 [![Visitors](https://hits.sh/github.com/d4nilx/AuroCI.svg?style=flat-square&label=visitors&color=orange)](https://hits.sh/github.com/d4nilx/AuroCI/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-32D74B?style=flat-square)](https://github.com/d4nilx/AuroCI)
