@@ -1,4 +1,3 @@
-using System.IO;
 using AuroCI.Core.Interfaces;
 
 namespace AuroCI.Core.Templates;
