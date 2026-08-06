@@ -1,13 +1,15 @@
 using System.IO;
+using AuroCI.Core.Interfaces;
 
 namespace AuroCI.Core.Templates;
 
-public class WinFormsTemplate
+public class WinFormsTemplate : BaseTemplate
 {
-    public void Generate(string projectName, string targetDirectory)
+  public override string Name => "winforms-ci.yml";
+
+  protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"
-name: {projectName} WinForms CI
+        return $@"name: {projectName} WinForms CI
 on:
   push:
     branches: [ ""main"" ]
@@ -33,12 +35,6 @@ jobs:
           run: dotnet build --no-restore -c Release
           
         - name: Run Tests
-          run: dotnet test --no-build --verbosity normal
-";
-        
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-        
-        File.WriteAllText(Path.Combine(workflowsDir, "winforms-ci.yml"), yaml);
+          run: dotnet test --no-build --verbosity normal";
     }
 }

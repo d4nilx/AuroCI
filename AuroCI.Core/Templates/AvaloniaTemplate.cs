@@ -1,12 +1,12 @@
-using System.IO;
-
 namespace AuroCI.Core.Templates;
 
-public class AvaloniaTemplate
+public class AvaloniaTemplate : BaseTemplate
 {
-    public void Generate(string projectName, string targetDirectory)
+    public override string Name => "avalonia-ci.yml";
+  
+    protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"name: {projectName} Avalonia CI
+        return $@"name: {projectName} Avalonia CI
 on:
   push:
     branches: [ ""main"" ]
@@ -17,34 +17,26 @@ jobs:
   build:
     strategy:
       matrix:
-        # To turn off on of the OS simply delete it.
         os: [ubuntu-latest, windows-latest, macos-latest]
         
-        runs-on: ${{{{ matrix.os }}}}
+    runs-on: ${{{{ matrix.os }}}}
 
-        steps:
-        - name: Checkout Code
-          uses: actions/checkout@v4
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
           
-        - name: Setup .NET SDK
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '10.0.x'
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
             
-        - name: Restore dependencies
-          run: dotnet restore
+    - name: Restore dependencies
+      run: dotnet restore
           
-        - name: Build App
-          run: dotnet build --no-restore -c Release
+    - name: Build App
+      run: dotnet build --no-restore -c Release
           
-        - name: Run Tests
-          run: dotnet test --no-build --verbosity normal
-";
-        
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-        
-        File.WriteAllText(Path.Combine(workflowsDir, "avalonia-ci.yml"), yaml);
+    - name: Run Tests
+      run: dotnet test --no-build --verbosity normal";
     }
 }
-

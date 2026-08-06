@@ -1,11 +1,15 @@
 
+using AuroCI.Core.Interfaces;
+
 namespace AuroCI.Core.Templates;
 
-public class ClassLibraryTemplate
+public class ClassLibraryTemplate : BaseTemplate
 {
-    public void Generate(string projectName, string targetDirectory)
+    public override string Name => "classlib-ci.yml";
+
+    protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"name: {projectName} Class Library CI
+        return $@"name: {projectName} Class Library CI
 
 on: 
     push:
@@ -40,12 +44,6 @@ jobs:
 
         - name: Pack NuGet Package
         if: matrix.os == 'ubuntu-latest'
-        run: dotnet pack --no-build -c Release -o ./artifacts
-";
-        
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-        
-        File.WriteAllText(Path.Combine(workflowsDir, "classlib-ci.json"), yaml);
+        run: dotnet pack --no-build -c Release -o ./artifacts ";
     }
 }
