@@ -3,13 +3,13 @@ using AuroCI.Core.Interfaces;
 
 namespace AuroCI.Core.Templates;
 
-public class WebTemplate : ITemplateGenerator
+public class WebTemplate : BaseTemplate
 {
-    public string Name { get; } = "ASP.NET Core Web CI/CD Template";
+    public override string Name => "web-ci.yml";
 
-    public void Generate(string projectName, string targetDirectory)
+    protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"name: {projectName} Web CI/CD
+        return $@"name: {projectName} Web CI/CD
 
 on: 
   push:
@@ -54,10 +54,5 @@ jobs:
         # Unique name for the artifact
         name: web-app-artifact-${{{{ matrix.os }}}}
         path: ./publish/";
-        
-        var workflowDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowDir);
-        
-        File.WriteAllText(Path.Combine(workflowDir, "web-ci.yml"), yaml);
     }
 }

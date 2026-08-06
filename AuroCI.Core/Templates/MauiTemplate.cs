@@ -3,13 +3,13 @@ using AuroCI.Core.Interfaces;
 
 namespace AuroCI.Core.Templates;
 
-public class MauiTemplate : ITemplateGenerator
+public class MauiTemplate : BaseTemplate
 {
-  public string Name { get; } = "MAUI Multi-Platform CI/CD Template";
+  public override string Name => "maui-ci.yml";
 
-  public void Generate(string projectName, string targetDirectory)
+  protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"name: {projectName} MAUI Multi-Platform CI/CD
+        return $@"name: {projectName} MAUI Multi-Platform CI/CD
 
 on:
   push:
@@ -83,12 +83,6 @@ jobs:
           name: apple-packages
           path: |
             **/bin/Release/net10.0-ios/**/*.ipa
-            **/bin/Release/net10.0-maccatalyst/**/*.pkg
-";
-        
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-
-        File.WriteAllText(Path.Combine(workflowsDir, "maui-ci.yml"), yaml);
+            **/bin/Release/net10.0-maccatalyst/**/*.pkg";
     }
 }

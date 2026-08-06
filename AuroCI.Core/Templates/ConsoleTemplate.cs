@@ -2,13 +2,13 @@ using AuroCI.Core.Interfaces;
 
 namespace AuroCI.Core.Templates;
 
-public class ConsoleTemplate : ITemplateGenerator
+public class ConsoleTemplate : BaseTemplate
 {
-    public string Name { get; } = ".NET Console App CI/CD Template";
+    public override string Name => "console-ci.yml";
 
-    public void Generate(string projectName, string targetDirectory)
+    protected override string GetYamlContent(string projectName)
     {
-        var yaml = $@"name: {projectName} Console CI
+        return $@"name: {projectName} Console CI
 
 on:
   push:
@@ -43,10 +43,5 @@ jobs:
       
     - name: Run Tests
       run: dotnet test --no-build --verbosity normal";
-
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-
-        File.WriteAllText(Path.Combine(workflowsDir, "console-ci.yml"), yaml);
     }
 }

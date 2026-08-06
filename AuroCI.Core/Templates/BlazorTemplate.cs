@@ -1,12 +1,13 @@
-using System.IO;
 
 namespace AuroCI.Core.Templates;
 
-public class BlazorTemplate
+public class BlazorTemplate : BaseTemplate
 {
-    public void Generate(string projectName, string targetDirectory)
-    {
-        var yaml = $@"
+  public override string Name => "blazor-ci.yml";
+
+  protected override string GetYamlContent(string projectName)
+  {
+    return $@"
 name: {projectName} Blazor CI
 on:
   push:
@@ -37,12 +38,6 @@ jobs:
       run: dotnet build --no-restore -c Release
       
     - name: Run Tests
-      run: dotnet test --no-build --verbosity normal
-";
-        
-        var workflowsDir = Path.Combine(targetDirectory, ".github", "workflows");
-        Directory.CreateDirectory(workflowsDir);
-        
-        File.WriteAllText(Path.Combine(workflowsDir, "blazor-ci.yml"), yaml);
-    }
+      run: dotnet test --no-build --verbosity normal";
+  }
 }

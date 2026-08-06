@@ -1,28 +1,50 @@
 ﻿using AuroCI.Core.Templates;
 using Spectre.Console;
 using AuroCI.Core.Detector;
+using AuroCI.Core.Helpers; 
 using AuroCI.Core.Models;
+using AuroCI.Core.Interfaces;
+
+var templates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["Maui"]         = (new MauiTemplate(),         "maui-ci.yml"),
+    ["Web"]          = (new WebTemplate(),           "web-ci.yml"),
+    ["Console"]      = (new ConsoleTemplate(),       "console-ci.yml"),
+    ["Avalonia"]     = (new AvaloniaTemplate(),      "avalonia-ci.yml"),
+    ["WPF"]          = (new WpfTemplate(),           "wpf-ci.yml"),
+    ["WinForms"]     = (new WinFormsTemplate(),      "winforms-ci.yml"),
+    ["BlazorWASM"]   = (new BlazorTemplate(),        "blazor-ci.yml"),
+    ["ClassLibrary"] = (new ClassLibraryTemplate(),  "classlib-ci.yml"),
+    ["Worker"]       = (new WorkerTemplate(),        "worker-ci.yml"),
+};
+
+var manualTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["🌐 ASP.NET Core Web"]  = (new WebTemplate(), "web-ci.yml"),
+    ["🖥️ .NET Console App"] = (new ConsoleTemplate(), "console-ci.yml"),
+    ["📱 .NET MAUI"]        = (new MauiTemplate(), "maui-ci.yml"),
+    ["🎨 Avalonia UI"]      = (new AvaloniaTemplate(), "avalonia-ci.yml"),
+    ["🪟 WPF"]              = (new WpfTemplate(), "wpf-ci.yml"),
+    ["🖼️ WinForms"]         = (new WinFormsTemplate(), "winforms-ci.yml"),
+    ["⚛️ Blazor WASM"]       = (new BlazorTemplate(), "blazor-ci.yml"),
+    ["📚  ClassLibrary"]    = (new ClassLibraryTemplate(), "classlib-ci.yml"),
+    ["💻  Worker"]          = (new WorkerTemplate(), "worker-ci.yml")
+};
 
 // Main program cycle
 while (true)
 {
-    // Here it clears everything on the screen to make it look nice 
     AnsiConsole.Clear();
-
-// Logo of the CLI tool
     AnsiConsole.Write(new FigletText("AuroCI").Centered().Color(Color.Green));
-
-// Here some text to make it look fancy
     AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate CI/CD pipelines.");
     AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
     string targetPath = string.Empty;
-
     ProjectDetector? detector;
     ProjectConfig? config;
+
     while (true)
     {
-        // Selection menu
         var selectionMode = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("How would you like to find the project?")
@@ -33,29 +55,24 @@ while (true)
                     "Create a Dockerfile",
                     "Exit"));
 
-        // Exit button
         if (selectionMode == "Exit")
         {
             AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
             return;
         }
 
-        // Here we make logic if user choose 
         if (selectionMode == "Enter the path manually")
         {
             targetPath = AnsiConsole.Ask<string>("What is the project path?");
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
 
-            // NEW SAFETY SYSTEM for manual path
-            string fullPath = Path.GetFullPath(targetPath);
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(Path.GetFullPath(targetPath)))
             {
-                AnsiConsole.MarkupLine($"[bold red]Directory not found: {fullPath}[/]");
+                AnsiConsole.MarkupLine($"[bold red]Directory not found: {Path.GetFullPath(targetPath)}[/]");
                 AnsiConsole.MarkupLine($"[grey]Please touch any key to try again[/]");
                 Console.ReadKey();
-                continue; // Here it goes back, so user can try again
+                continue; 
             }
-
             break;
         }
 
@@ -64,399 +81,106 @@ while (true)
             targetPath = AnsiConsole.Ask<string>("What is the project path for Dockerfile?");
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
 
-            // NEW SAFETY SYSTEM for manual path
-            string fullPath = Path.GetFullPath(targetPath);
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(Path.GetFullPath(targetPath)))
             {
-                AnsiConsole.MarkupLine($"[bold red]Directory not found: {fullPath}[/]");
+                AnsiConsole.MarkupLine($"[bold red]Directory not found: {Path.GetFullPath(targetPath)}[/]");
                 AnsiConsole.MarkupLine($"[grey]Please touch any key to try again[/]");
                 Console.ReadKey();
-                continue; // Here it goes back, so user can try again
+                continue; 
             }
 
             detector = new ProjectDetector();
             config = detector.Detect(targetPath);
             AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
 
-            try
-            {
-                new DockerTemplate(config.ProjectType).Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated Dockerfile[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error generating Dockerfile: {ex.Message}[/]");
-            }
+            DockerHelper.TryGenerateDockerfile(config.ProjectName, targetPath, config.ProjectType);
 
             var doAnotherDocker = AnsiConsole.Confirm("\nDo you want to process another project?", false);
             if (!doAnotherDocker)
             {
                 AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
-                return; // Exit the application
+                return; 
             }
-
             continue;
         }
-        else
+        
+        if (selectionMode == "Detect project in current directory")
         {
-            var currentDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            bool goBackToMenu = false;
-
-            // Cycle of the folders 
-            while (true)
-            {
-                AnsiConsole.Clear();
-
-                List<string> directories = new();
-
-                try
-                {
-                    directories = Directory.GetDirectories(currentDir).Select(Path.GetFileName)
-                        .Where(name => !name.StartsWith(".")).ToList();
-                }
-                catch
-                {
-                    AnsiConsole.MarkupLine("[red]No access to this directory.[/]");
-                    Console.ReadKey();
-                    var parent = Directory.GetParent(currentDir);
-                    if (parent != null) currentDir = parent.FullName;
-                    continue;
-                }
-
-                // Our navigation buttons
-                directories.Insert(0, "✅ [green]Choose this directory[/]");
-                directories.Insert(1, "⬅️ [yellow]Go back to menu[/]"); // Go back
-
-                if (currentDir != "/") directories.Insert(2, "🔙 [yellow]Back (..)[/]");
-
-                var selectedItem = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                    .Title($"[cyan]Current directory:[/] {currentDir}\n[grey]Use arrows and Enter to select[/]")
-                    .PageSize(15)
-                    .AddChoices(directories));
-
-                if (selectedItem == "✅ [green]Choose this directory[/]")
-                {
-                    targetPath = currentDir;
-                    break;
-                }
-                else if (selectedItem == "⬅️ [yellow]Go back to menu[/]")
-                {
-                    goBackToMenu = true;
-                    break;
-                }
-                else if (selectedItem == "🔙 [yellow]Back (..)[/]")
-                {
-                    var parent = Directory.GetParent(currentDir);
-                    if (parent != null) currentDir = parent.FullName;
-                }
-                else
-                {
-                    currentDir = Path.Combine(currentDir, selectedItem);
-                }
-
-                if (!goBackToMenu && !string.IsNullOrEmpty(targetPath)) break;
-            }
-
-            if (!goBackToMenu && !string.IsNullOrEmpty(targetPath)) break;
-        }
-
-        if (!string.IsNullOrEmpty(targetPath))
-        {
-            AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
+            var selectedPath = DirectoryNavigator.SelectDirectrory();
+            if (selectedPath == null) continue; 
+            
+            targetPath = selectedPath;
+            break; 
         }
     }
 
     if (string.IsNullOrWhiteSpace(targetPath)) return;
 
+    AnsiConsole.MarkupLine($"\n[bold green]Final path selected:[/] {targetPath}");
+    
     detector = new ProjectDetector();
     config = detector.Detect(targetPath);
     AnsiConsole.MarkupLine($"Detected: {config.ProjectType}");
+    
     var confirmed = AnsiConsole.Confirm("Do you want to generate CI/CD files?", false);
-    if (!confirmed)
+    if (!confirmed) continue;
+
+    if (templates.TryGetValue(config.ProjectType, out var entry))
     {
-        continue;
+        try
+        {
+            entry.template.Generate(config.ProjectName, targetPath);
+            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {entry.fileName}[/]");
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
+        }
     }
-
-    // Here it choose which template was detected in project
-    switch (config.ProjectType)
+    else
     {
-        case "Maui":
+        AnsiConsole.MarkupLine("[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
+        var forceConfirm = AnsiConsole.Confirm("Do you want to generate a template manually?", false);
+
+        if (!forceConfirm)
+        {
+            var stay = AnsiConsole.Confirm("Do you want to stay in the menu to choose another project?", false);
+            if (stay) continue;
+            
+            AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+            return;
+        }
+
+        AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
+
+        var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title($"[bold green]Choose project type:[/]")
+            .PageSize(10)
+            .HighlightStyle(new Style(foreground: Color.Cyan1))
+            .AddChoices(manualTemplates.Keys.Append("❌ Exit"))); 
+            
+        if (choice == "❌ Exit")
+        {
+            AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");
+        }
+        else if (manualTemplates.TryGetValue(choice, out var selected))
+        {
             try
             {
-                new MauiTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD maui-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error generating MAUI template: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "Web":
-            try
-            {
-                new WebTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD web-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error generating Web template: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "Console":
-            try
-            {
-                new ConsoleTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD console-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error generating Console template: {ex.Message}[/]");
-            }
-
-            break;
-        case "Avalonia":
-            try
-            {
-                new AvaloniaTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD avalonia-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "WPF":
-            try
-            {
-                new WpfTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD wpf-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "WinForms":
-            try
-            {
-                new WinFormsTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD winforms-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "BlazorWASM":
-            try
-            {
-                new BlazorTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD blazor-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "ClassLibrary":
-            try
-            {
-                new ClassLibraryTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD classlib-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        case "Worker":
-            try
-            {
-                new WorkerTemplate().Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD worker-ci.yml[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-            }
-
-            break;
-
-        default:
-            // If we can't detect the project type, we can ask the user to choose a template manually
-            AnsiConsole.MarkupLine(
-                "[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
-            var forceConfirm = AnsiConsole.Confirm("Do you want to generate a template manually?", false);
-
-            if (!forceConfirm)
-            {
-                var stay = AnsiConsole.Confirm("Do you want to stay in the menu to choose another project?", false);
-                if (stay)
-                {
-                    continue; // Go back to the main menu
-                }
-                else
-                {
-                    AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
-                    return; // Exit the application
-                }
-            }
-
-            AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
-
-            var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .Title($"[bold green]Choose project type:[/]")
-                .PageSize(5)
-                .HighlightStyle(new Style(foreground: Color.Cyan1))
-                .AddChoices(new[]
-                {
-                    "🌐 ASP.NET Core Web",
-                    "🖥️ .NET Console App",
-                    "📱 .NET MAUI",
-                    "🎨 Avalonia UI",
-                    "🪟 WPF",
-                    "🖼️ WinForms",
-                    "⚛️ Blazor WASM",
-                    "📚  ClassLibrary",
-                    "💻  Worker",
-                    "❌ Exit"
-                }));
-            try
-            {
-                switch (choice)
-                {
-                    case "🌐 ASP.NET Core Web":
-                        new WebTemplate().Generate(config.ProjectName, targetPath);
-                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD web-ci.yml[/]");
-                        break;
-                    case "🖥️ .NET Console App":
-                        new ConsoleTemplate().Generate(config.ProjectName, targetPath);
-                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD console-ci.yml[/]");
-                        break;
-                    case "📱 .NET MAUI":
-                        new MauiTemplate().Generate(config.ProjectName, targetPath);
-                        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD maui-ci.yml[/]");
-                        break;
-                    case "🎨 Avalonia UI":
-                        try
-                        {
-                            new AvaloniaTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD avalonia-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-
-                    case "🪟 WPF":
-                        try
-                        {
-                            new WpfTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD wpf-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-
-                    case "🖼️ WinForms":
-                        try
-                        {
-                            new WinFormsTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD winforms-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-
-                    case "⚛️ Blazor WASM":
-                        try
-                        {
-                            new BlazorTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD blazor-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-                    case "ClassLibrary":
-                        try
-                        {
-                            new ClassLibraryTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD classlib-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-
-                    case "Worker":
-                        try
-                        {
-                            new WorkerTemplate().Generate(config.ProjectName, targetPath);
-                            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD worker-ci.yml[/]");
-                        }
-                        catch (Exception ex)
-                        {
-                            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-                        }
-
-                        break;
-                    case "❌ Exit":
-                        AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");
-                        break;
-                }
+                selected.template.Generate(config.ProjectName, targetPath);
+                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {selected.fileName}[/]");
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Error generating template: {ex.Message}[/]");
             }
-
-            break;
+        }
     }
 
     var generateDocker = AnsiConsole.Confirm("Would you also like to generate a Dockerfile?", false);
     if (generateDocker)
     {
-        try
-        {
-            new DockerTemplate(config.ProjectType).Generate(config.ProjectName, targetPath);
-            AnsiConsole.MarkupLine("[green]Successfully generated Dockerfile[/]");
-            AnsiConsole.MarkupLine(
-                "[red]WARNING!! Please review the generated Dockerfile before using it in production. There is might be mistakes![/]");
-        }
-        catch (Exception ex)
-        {
-            AnsiConsole.MarkupLine($"[red]Error generating Dockerfile: {ex.Message}[/]");
-        }
-
-        AnsiConsole.MarkupLine(
-            "[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
+        DockerHelper.TryGenerateDockerfile(config.ProjectName, targetPath, config.ProjectType);
 
         var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
         if (!doAnother)
