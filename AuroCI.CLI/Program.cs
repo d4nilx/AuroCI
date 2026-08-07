@@ -176,6 +176,8 @@ while (true)
             }
         }
     }
+    
+    AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
 
     var generateDocker = AnsiConsole.Confirm("Would you also like to generate a Dockerfile?", false);
     if (generateDocker)

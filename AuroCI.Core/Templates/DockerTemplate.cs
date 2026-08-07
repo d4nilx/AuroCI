@@ -1,4 +1,5 @@
 using AuroCI.Core.Interfaces;
+using Spectre.Console;
 
 namespace AuroCI.Core.Templates;
 
@@ -49,6 +50,21 @@ COPY --from=build /app/publish .
 ENTRYPOINT [""dotnet"", ""{dllName}""]";
 
         File.WriteAllText(Path.Combine(targetDirectory, "Dockerfile"), dockerfileContent);
+
+        var dockerignoreContent = """
+                                  bin/
+                                  obj/
+                                  .git/
+                                  .github/
+                                  .idea/
+                                  *.user
+                                  *.suo
+                                  .vs/
+                                  node_modules/
+                                  """;
+
+        File.WriteAllText(Path.Combine(targetDirectory, ".dockerignore"), dockerignoreContent);
+        AnsiConsole.MarkupLine("[green]Successfully generated Dockerfile and .dockerignore[/]");
     }
 
     private IEnumerable<string> FindCsprojFiles(string rootPath)
