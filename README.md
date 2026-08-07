@@ -8,6 +8,7 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/AuroCI?style=flat-square&color=32D74B&label=downloads)](https://www.nuget.org/packages/AuroCI)
 [![Stars](https://img.shields.io/github/stars/d4nilx/AuroCI?style=flat-square&color=FFD60A)](https://github.com/d4nilx/AuroCI/stargazers)
 [![Visitors](https://hits.sh/github.com/d4nilx/AuroCI.svg?style=flat-square&label=visitors&color=orange)](https://hits.sh/github.com/d4nilx/AuroCI/)
+[![CI](https://img.shields.io/github/actions/workflow/status/d4nilx/AuroCI/console-ci.yml?style=flat-square&label=CI)](https://github.com/d4nilx/AuroCI/actions)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-32D74B?style=flat-square)](https://github.com/d4nilx/AuroCI)
 [![.NET](https://img.shields.io/badge/.NET-10.0-00F2FF?style=flat-square)](https://dotnet.microsoft.com)
 
@@ -85,9 +86,17 @@ AuroCI.sln
 │       ├── WebTemplate.cs
 │       ├── WinFormsTemplate.cs
 │       ├── WorkerTemplate.cs
-│       └── WpfTemplate.cs
-└── AuroCI.CLI/                 # UI layer — terminal interface
-    └── Program.cs
+│       ├── WpfTemplate.cs
+│       └──DockerTemplate.cs
+│ 
+├── AuroCI.CLI/                 # UI layer — terminal interface
+│   ├── Program.cs
+│   └──Helpers/
+│        ├── DirectoryNavigator.cs
+│        └── DockerHelpers.cs 
+│ 
+├── AuroCI.Tests/               # Unit tests for core logic
+    └── DtectorTests/
 ```
 
 ---
@@ -135,6 +144,7 @@ AuroCI.sln
 - [x] Worker Service template
 - [x] Global .NET Tool on NuGet (`dotnet tool install -g AuroCI`)
 - [x] Manual template fallback for undetected projects
+- [x] Dockerfile generation with .dockerignore support
 - [ ] Support for other languages (Node.js, Python, Go)
 - [ ] Custom template configuration via `auroci.json`
 
