@@ -18,7 +18,7 @@
 
     <PackageId>AuroCI</PackageId>
     <PackageIcon>auroci-logo.png</PackageIcon>
-    <Version>1.1.3</Version>
+    <Version>1.2.0</Version>
 
     <Authors>Daniil Zhdanov</Authors>
     <Description>A fast, self-contained terminal utility to automatically generate cross-platform CI/CD pipelines.</Description>
