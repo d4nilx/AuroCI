@@ -1,9 +1,10 @@
-﻿using AuroCI.Core.Templates;
-using Spectre.Console;
+﻿using Spectre.Console;
 using AuroCI.Core.Detector;
 using AuroCI.Core.Helpers; 
 using AuroCI.Core.Models;
 using AuroCI.Core.Interfaces;
+using AuroCI.Core.Templates.DotNet;
+using AuroCI.Core.Templates.Python;
 
 var templates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
@@ -22,7 +23,7 @@ var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, strin
 {
     ["PythonFlask"]       = (new PythonFlaskTemplate(),       "flask-ci.yml"),
     ["PythonDjango"]      = (new PythonDjangoTemplate(),      "django-ci.yml"),
-    ["PythonFastApi"]     = (new PythonFastAPITemplate(),     "fastapi-ci.yml"),
+    ["PythonFastApi"]     = (new PythonFastApiTemplate(),     "fastapi-ci.yml"),
     ["PythonDataScience"] = (new PythonDataScienceTemplate(), "python-datascience-ci.yml"),
     ["PythonScript"]      = (new PythonScriptTemplate(),      "python-script-ci.yml")
 };
@@ -48,7 +49,7 @@ while (true)
     AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate CI/CD pipelines.");
     AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
-    string targetPath = string.Empty;
+    string targetPath;
     ProjectDetector? detector;
     ProjectConfig? config;
 

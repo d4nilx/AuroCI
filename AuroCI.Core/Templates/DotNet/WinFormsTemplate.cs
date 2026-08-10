@@ -1,15 +1,12 @@
-using System.IO;
-using AuroCI.Core.Interfaces;
+namespace AuroCI.Core.Templates.DotNet;
 
-namespace AuroCI.Core.Templates;
-
-public class WpfTemplate : BaseTemplate
+public class WinFormsTemplate : BaseTemplate
 {
-  public override string Name => "wpf-ci.yml";
+  public override string Name => "winforms-ci.yml";
 
   protected override string GetYamlContent(string projectName)
     {
-        return $@"name: {projectName} Wpf CI
+        return $@"name: {projectName} WinForms CI
 on:
   push:
     branches: [ ""main"" ]

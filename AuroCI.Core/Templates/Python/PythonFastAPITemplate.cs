@@ -1,6 +1,8 @@
-namespace AuroCI.Core.Templates;
+using AuroCI.Core.Templates.DotNet;
 
-public class PythonFastAPITemplate : BaseTemplate
+namespace AuroCI.Core.Templates.Python;
+
+public class PythonFastApiTemplate : BaseTemplate
 {
     public override string Name => "python-fastapi-ci.yml";
     

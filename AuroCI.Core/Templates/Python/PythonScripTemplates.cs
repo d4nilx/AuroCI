@@ -1,4 +1,6 @@
-namespace AuroCI.Core.Templates;
+using AuroCI.Core.Templates.DotNet;
+
+namespace AuroCI.Core.Templates.Python;
 
 public class PythonScriptTemplate : BaseTemplate
 {

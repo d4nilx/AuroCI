@@ -1,7 +1,4 @@
-using System.IO;
-using AuroCI.Core.Interfaces;
-
-namespace AuroCI.Core.Templates;
+namespace AuroCI.Core.Templates.DotNet;
 
 public class MauiTemplate : BaseTemplate
 {
