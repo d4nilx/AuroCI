@@ -40,7 +40,15 @@ public class ProjectDetector : IProjectDetector
         
         if (csprojFile == null)
         {
-            return config; 
+            var requirements = Directory.GetFiles(path, "requirements.txt").FirstOrDefault();
+            var pyprojFile = Directory.GetFiles(path, "pyproject.toml").FirstOrDefault();
+
+            if (requirements != null || pyprojFile != null)
+            {
+                config.ProjectType = DetectPythonType(requirements ?? pyprojFile!);
+                return config;
+            }
+            return config;
         }
         
         try 
@@ -62,5 +70,17 @@ public class ProjectDetector : IProjectDetector
         }
         
         return config;
+    }
+    
+    private string DetectPythonType(string filePath)
+    {
+        var content = File.ReadAllText(filePath).ToLower();
+        
+        if (content.Contains("flask")) return "PythonFlask";
+        if (content.Contains("django")) return "PythonDjango";
+        if (content.Contains("fastapi")) return "PythonFastApi";
+        if (content.Contains("pandas") || content.Contains("numpy") || content.Contains("jupyter")) return "PythonDataScience";
+        
+        return "PythonScript";
     }
 }

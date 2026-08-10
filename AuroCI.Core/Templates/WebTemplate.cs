@@ -20,6 +20,7 @@ on:
 jobs: 
   build:
     strategy: 
+      fail-fast: false
       matrix: 
         # NOTE!! Here you can use all OS or choose one you targeting
         os: [ubuntu-latest, windows-latest, macos-latest]

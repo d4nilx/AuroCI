@@ -19,6 +19,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         # To turn off on of the OS simply delete it.
         os: [ubuntu-latest, windows-latest, macos-latest]
