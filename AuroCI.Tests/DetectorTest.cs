@@ -31,6 +31,31 @@ public class DetectorTest
         // Cleaning 
         Directory.Delete(tempDir, true);
     }
+    
+    [Theory]
+    [InlineData("flask", "PythonFlask")]
+    [InlineData("django", "PythonDjango")]
+    [InlineData("fastapi", "PythonFastApi")]
+    [InlineData("pandas", "PythonDataScience")]
+    [InlineData("numpy", "PythonDataScience")]
+    [InlineData("requests", "PythonScript")]
+    public void Detect_ProjectType_PythonRequirements_ReturnsCorrectType(string requirementsContent, string expectedType)
+    {
+        // Arrange
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+        File.WriteAllText(Path.Combine(tempDir, "requirements.txt"), requirementsContent);
+        var detect = new ProjectDetector();
+        
+        // Act
+        var result = detect.Detect(tempDir);
+
+        //Asset
+        Assert.Equal(expectedType, result.ProjectType);
+        
+        // Cleaning 
+        Directory.Delete(tempDir, true);
+    }
 
     [Fact]
     public void Detect_ProjectType_DoesNotExist()

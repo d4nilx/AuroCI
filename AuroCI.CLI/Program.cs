@@ -18,6 +18,15 @@ var templates = new Dictionary<string, (ITemplateGenerator template, string file
     ["Worker"]       = (new WorkerTemplate(),        "worker-ci.yml"),
 };
 
+var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["PythonFlask"]       = (new PythonFlaskTemplate(),       "flask-ci.yml"),
+    ["PythonDjango"]      = (new PythonDjangoTemplate(),      "django-ci.yml"),
+    ["PythonFastApi"]     = (new PythonFastAPITemplate(),     "fastapi-ci.yml"),
+    ["PythonDataScience"] = (new PythonDataScienceTemplate(), "python-datascience-ci.yml"),
+    ["PythonScript"]      = (new PythonScriptTemplate(),      "python-script-ci.yml")
+};
+
 var manualTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
     ["🌐 ASP.NET Core Web"]  = (new WebTemplate(), "web-ci.yml"),
@@ -137,9 +146,21 @@ while (true)
             AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
         }
     }
+    else if (pythonTemplates.TryGetValue(config.ProjectType, out var pyEntry))
+    {
+        try
+        {
+            pyEntry.template.Generate(config.ProjectName, targetPath);
+            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {pyEntry.fileName}[/]");
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
+        }
+    }
     else
     {
-        AnsiConsole.MarkupLine("[yellow]Be carefully: Project type not recognized. Please choose a template manually.[/]");
+        AnsiConsole.MarkupLine("[yellow]Be careful: Project type not recognized. Please choose a template manually.[/]");
         var forceConfirm = AnsiConsole.Confirm("Do you want to generate a template manually?", false);
 
         if (!forceConfirm)
@@ -151,28 +172,49 @@ while (true)
             return;
         }
 
-        AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
+        var language = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("[bold green]Which language to use?[/]")
+            .AddChoices("🔷.NET", "🐍 Python", "❌ Exit"));
 
-        var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title($"[bold green]Choose project type:[/]")
-            .PageSize(10)
-            .HighlightStyle(new Style(foreground: Color.Cyan1))
-            .AddChoices(manualTemplates.Keys.Append("❌ Exit"))); 
-            
-        if (choice == "❌ Exit")
+        var selectedTemplate = language switch
+        {
+            "🔷.NET" => manualTemplates,
+            "🐍 Python" => pythonTemplates.ToDictionary(
+                k => k.Key,
+                v => v.Value),
+            _ => null
+        };
+        
+        if (selectedTemplate == null)
         {
             AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");
+            break;
         }
-        else if (manualTemplates.TryGetValue(choice, out var selected))
+        else
         {
-            try
+            AnsiConsole.MarkupLine($"[purple]Generating template manually.[/]");
+
+            var choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .Title($"[bold green]Choose project type:[/]")
+                .PageSize(10)
+                .HighlightStyle(new Style(foreground: Color.Cyan1))
+                .AddChoices(selectedTemplate.Keys.Append("❌ Exit"))); 
+            
+            if (choice == "❌ Exit")
             {
-                selected.template.Generate(config.ProjectName, targetPath);
-                AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {selected.fileName}[/]");
+                AnsiConsole.MarkupLine("[yellow]Exiting without generating any templates.[/]");
             }
-            catch (Exception ex)
+            else if (selectedTemplate.TryGetValue(choice, out var selected))
             {
-                AnsiConsole.MarkupLine($"[red]Error generating template: {ex.Message}[/]");
+                try
+                {
+                    selected.template.Generate(config.ProjectName, targetPath);
+                    AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {selected.fileName}[/]");
+                }
+                catch (Exception ex)
+                {
+                    AnsiConsole.MarkupLine($"[red]Error generating template: {ex.Message}[/]");
+                }
             }
         }
     }
