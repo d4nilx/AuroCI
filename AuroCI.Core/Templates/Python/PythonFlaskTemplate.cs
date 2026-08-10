@@ -1,9 +1,11 @@
-namespace AuroCI.Core.Templates;
+using AuroCI.Core.Templates.DotNet;
 
-public class PythonDjangoTemplate : BaseTemplate
+namespace AuroCI.Core.Templates.Python;
+
+public class PythonFlaskTemplate : BaseTemplate
 {
-  public override string Name => "python-django-ci.yml";
-    protected override string GetYamlContent(string projectName) => $@"name: {projectName} Python Django
+  public override string Name => "python-flask-ci.yml";
+    protected override string GetYamlContent(string projectName) => $@"name {projectName} Python Flask
 
 jobs:
   build:
@@ -21,7 +23,7 @@ jobs:
     - name: Run tests
       run: pytest
       
-    - name: Check Django app starts
+    - name: Check Flask app starts
       run: flask --version
 ";
 }
