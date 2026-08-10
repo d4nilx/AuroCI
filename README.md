@@ -63,6 +63,11 @@ That's it. AuroCI will detect your project type and generate the CI/CD pipeline 
 | Blazor WASM | `WebAssembly` reference | Ubuntu, macOS, Windows |
 | Class Library | SDK-style, no `OutputType` | Ubuntu, macOS, Windows |
 | Worker Service | `Microsoft.NET.Sdk.Worker` | Ubuntu|
+| Flask Web App | `flask` in requirements.txt | Ubuntu only |
+| Django Web App | `django` in requirements.txt | Ubuntu only |
+| FastAPI | `fastapi` in requirements.txt | Ubuntu only |
+| Python Script/Library | `requirements.txt` or `pyproject.toml` | Ubuntu, macOS, Windows |
+| Python Data Science | `pandas`/`numpy`/`jupyter` | Ubuntu only |
 
 ---
 
@@ -78,16 +83,22 @@ AuroCI.sln
 │   ├── Models/
 │   │   └── ProjectConfig.cs
 │   └── Templates/
-│       ├── AvaloniaTemplate.cs
-│       ├── BlazorTemplate.cs
-│       ├── ClassLibraryTemplate.cs
-│       ├── ConsoleTemplate.cs
-│       ├── MauiTemplate.cs
-│       ├── WebTemplate.cs
-│       ├── WinFormsTemplate.cs
-│       ├── WorkerTemplate.cs
-│       ├── WpfTemplate.cs
-│       └──DockerTemplate.cs
+│           ├──DotNet/
+|           |    ├── AvaloniaTemplate.cs
+│           |    ├── BlazorTemplate.cs
+│           |    ├── ClassLibraryTemplate.cs
+│           |    ├── ConsoleTemplate.cs
+│           |    ├── MauiTemplate.cs
+│           |    ├── WebTemplate.cs
+│           |    ├── WinFormsTemplate.cs
+│           |    ├── WorkerTemplate.cs
+│           |    └── WpfTemplate.cs
+|           ├── Python/
+|           |    ├── DjangoTemplate.cs
+|           |    ├── FastApiTemplate.cs
+|           |    ├── FlaskTemplate.cs
+|           |    └── PythonScriptTemplate.cs
+│           └──DockerTemplate.cs
 │ 
 ├── AuroCI.CLI/                 # UI layer — terminal interface
 │   ├── Program.cs
@@ -145,7 +156,8 @@ AuroCI.sln
 - [x] Global .NET Tool on NuGet (`dotnet tool install -g AuroCI`)
 - [x] Manual template fallback for undetected projects
 - [x] Dockerfile generation with .dockerignore support
-- [ ] Support for other languages (Node.js, Python, Go)
+- [x] Python support (Flask, Django, FastAPI, Data Science, Script)
+- [ ] Support for other languages (Node.js, Go)
 - [ ] Custom template configuration via `auroci.json`
 
 ---
