@@ -1,5 +1,4 @@
 ﻿using AuroCI.Core.Detector;
-using AuroCI.Core.Models;
 
 namespace AuroCI.Tests;
 
