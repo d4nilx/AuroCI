@@ -8,6 +8,12 @@ public class PythonFastApiTemplate : BaseTemplate
     
     protected override string GetYamlContent(string projectName) => $@"name: {projectName} Python FastAPI
 
+on:
+  push:
+    branches: [ ""main"" ]
+  pull_request:
+    branches: [ ""main"" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest  
@@ -17,6 +23,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+        cache: 'pip'
         
     - name: Install dependencies
       run: pip install -r requirements.txt
@@ -25,6 +32,6 @@ jobs:
       run: pytest
       
     - name: Check FastAPI app starts
-      run: fastapi --version
+      run: python -c ""import fastapi; print('FastAPI version:', fastapi.__version__)""
 ";
 }

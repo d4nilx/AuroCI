@@ -5,8 +5,8 @@ public class WpfTemplate : BaseTemplate
   public override string Name => "wpf-ci.yml";
 
   protected override string GetYamlContent(string projectName)
-    {
-        return $@"name: {projectName} Wpf CI
+  {
+    return $@"name: {projectName} Wpf CI
 on:
   push:
     branches: [ ""main"" ]
@@ -32,6 +32,15 @@ jobs:
           run: dotnet build --no-restore -c Release
           
         - name: Run Tests
-          run: dotnet test --no-build --verbosity normal";
-    }
+          run: dotnet test --no-build --verbosity normal
+
+        - name: Publish App
+          run: dotnet publish -c Release -o ./publish
+          
+        - name: Upload Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: {{projectName}}-windows-app
+            path: ./publish/";
+  }
 }
