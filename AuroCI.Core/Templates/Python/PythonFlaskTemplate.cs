@@ -4,8 +4,15 @@ namespace AuroCI.Core.Templates.Python;
 
 public class PythonFlaskTemplate : BaseTemplate
 {
-  public override string Name => "python-flask-ci.yml";
-    protected override string GetYamlContent(string projectName) => $@"name {projectName} Python Flask
+    public override string Name => "python-flask-ci.yml";
+    
+    protected override string GetYamlContent(string projectName) => $@"name: {projectName} Python Flask
+
+on:
+  push:
+    branches: [ ""main"" ]
+  pull_request:
+    branches: [ ""main"" ]
 
 jobs:
   build:
@@ -16,6 +23,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+        cache: 'pip'
         
     - name: Install dependencies
       run: pip install -r requirements.txt

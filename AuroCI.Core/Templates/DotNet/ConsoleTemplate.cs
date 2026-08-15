@@ -41,6 +41,15 @@ jobs:
       run: dotnet build --no-restore -c Release
       
     - name: Run Tests
-      run: dotnet test --no-build --verbosity normal";
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish App
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: console-app-${{{{ matrix.os }}}}
+        path: ./publish";
     }
 }
