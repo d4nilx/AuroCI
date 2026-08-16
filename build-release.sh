@@ -1,6 +1,5 @@
 #!/bin/bash 
 
-# 1. Очищаємо папку від старих збірок, щоб не запушити сміття!
 rm -rf ./packages
 mkdir -p ./packages 
 echo "📦 Folder ./packages is ready."
@@ -43,7 +42,8 @@ echo "------------------------------"
 read -p "Enter release version (e.g., v1.0.0): " version
 
 echo "🚀 Pushing to GitHub Releases..."
-gh release create "$version" ./packages/* --title "AuroCI $version" --notes "New CI/CD generator release"
+read -p "Enter your description for the release: " release_notes
+gh release create "$version" ./packages/* --title "AuroCI $version" --notes "$release_notes"
 
 echo "✅ Release $version successfully published on GitHub!"
 echo "------------------------------"
@@ -57,4 +57,4 @@ echo ""
 echo "🚀 Pushing to NuGet.org..."
 dotnet nuget push ./packages/*.nupkg -k "$nuget_key" -s https://api.nuget.org/v3/index.json
 
-echo "✅ Package successfully published on NuGet! You are amazing! 😎"
+echo "✅ Package successfully published on NuGet!"
