@@ -5,18 +5,19 @@ using AuroCI.Core.Models;
 using AuroCI.Core.Interfaces;
 using AuroCI.Core.Templates.DotNet;
 using AuroCI.Core.Templates.Python;
+using AuroCI.Core.Templates.Node; 
 
 var templates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
     ["Maui"]         = (new MauiTemplate(),         "maui-ci.yml"),
-    ["Web"]          = (new WebTemplate(),           "web-ci.yml"),
-    ["Console"]      = (new ConsoleTemplate(),       "console-ci.yml"),
-    ["Avalonia"]     = (new AvaloniaTemplate(),      "avalonia-ci.yml"),
-    ["WPF"]          = (new WpfTemplate(),           "wpf-ci.yml"),
-    ["WinForms"]     = (new WinFormsTemplate(),      "winforms-ci.yml"),
-    ["BlazorWASM"]   = (new BlazorTemplate(),        "blazor-ci.yml"),
-    ["ClassLibrary"] = (new ClassLibraryTemplate(),  "classlib-ci.yml"),
-    ["Worker"]       = (new WorkerTemplate(),        "worker-ci.yml"),
+    ["Web"]          = (new WebTemplate(),          "web-ci.yml"),
+    ["Console"]      = (new ConsoleTemplate(),      "console-ci.yml"),
+    ["Avalonia"]     = (new AvaloniaTemplate(),     "avalonia-ci.yml"),
+    ["WPF"]          = (new WpfTemplate(),          "wpf-ci.yml"),
+    ["WinForms"]     = (new WinFormsTemplate(),     "winforms-ci.yml"),
+    ["BlazorWASM"]   = (new BlazorTemplate(),       "blazor-ci.yml"),
+    ["ClassLibrary"] = (new ClassLibraryTemplate(), "classlib-ci.yml"),
+    ["Worker"]       = (new WorkerTemplate(),       "worker-ci.yml"),
 };
 
 var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
@@ -28,6 +29,15 @@ var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, strin
     ["PythonScript"]      = (new PythonScriptTemplate(),      "python-script-ci.yml")
 };
 
+var nodeTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["NodeGeneral"] = (new NodeTemplate(NodeProjectType.General), "node-cicd.yml"),
+    ["NodeNext"]    = (new NodeTemplate(NodeProjectType.Next),    "next-cicd.yml"),
+    ["NodeAngular"] = (new NodeTemplate(NodeProjectType.Angular), "angular-cicd.yml"),
+    ["NodeVue"]     = (new NodeTemplate(NodeProjectType.Vue),     "vue-cicd.yml"),
+    ["NodeNest"]    = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
+};
+
 var manualTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
     ["🌐 ASP.NET Core Web"]  = (new WebTemplate(), "web-ci.yml"),
@@ -37,8 +47,17 @@ var manualTemplates = new Dictionary<string, (ITemplateGenerator template, strin
     ["🪟 WPF"]              = (new WpfTemplate(), "wpf-ci.yml"),
     ["🖼️ WinForms"]         = (new WinFormsTemplate(), "winforms-ci.yml"),
     ["⚛️ Blazor WASM"]       = (new BlazorTemplate(), "blazor-ci.yml"),
-    ["📚  ClassLibrary"]    = (new ClassLibraryTemplate(), "classlib-ci.yml"),
-    ["💻  Worker"]          = (new WorkerTemplate(), "worker-ci.yml")
+    ["📚 ClassLibrary"]     = (new ClassLibraryTemplate(), "classlib-ci.yml"),
+    ["💻 Worker"]           = (new WorkerTemplate(), "worker-ci.yml")
+};
+
+var manualNodeTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["📦 General Node.js"] = (new NodeTemplate(NodeProjectType.General), "node-cicd.yml"),
+    ["▲ Next.js"]          = (new NodeTemplate(NodeProjectType.Next),    "next-cicd.yml"),
+    ["🅰️ Angular"]          = (new NodeTemplate(NodeProjectType.Angular), "angular-cicd.yml"),
+    ["🖖 Vue.js"]           = (new NodeTemplate(NodeProjectType.Vue),     "vue-cicd.yml"),
+    ["🦁 NestJS"]           = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
 };
 
 // Main program cycle
@@ -49,7 +68,7 @@ while (true)
     AnsiConsole.MarkupLine("[bold white]Hello it's AuroCI[/] - your tool to automate CI/CD pipelines.");
     AnsiConsole.MarkupLine("System status: [bold green]OK[/] - All systems are operational.\n");
 
-    string targetPath;
+    string targetPath = string.Empty;
     ProjectDetector? detector;
     ProjectConfig? config;
 
@@ -137,27 +156,15 @@ while (true)
 
     if (templates.TryGetValue(config.ProjectType, out var entry))
     {
-        try
-        {
-            entry.template.Generate(config.ProjectName, targetPath);
-            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {entry.fileName}[/]");
-        }
-        catch (Exception ex)
-        {
-            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-        }
+        GenerateSafely(entry.template, config.ProjectName, targetPath, entry.fileName);
     }
     else if (pythonTemplates.TryGetValue(config.ProjectType, out var pyEntry))
     {
-        try
-        {
-            pyEntry.template.Generate(config.ProjectName, targetPath);
-            AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {pyEntry.fileName}[/]");
-        }
-        catch (Exception ex)
-        {
-            AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
-        }
+        GenerateSafely(pyEntry.template, config.ProjectName, targetPath, pyEntry.fileName);
+    }
+    else if (nodeTemplates.TryGetValue(config.ProjectType, out var nodeEntry))
+    {
+        GenerateSafely(nodeEntry.template, config.ProjectName, targetPath, nodeEntry.fileName);
     }
     else
     {
@@ -175,14 +182,13 @@ while (true)
 
         var language = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold green]Which language to use?[/]")
-            .AddChoices("🔷.NET", "🐍 Python", "❌ Exit"));
+            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "❌ Exit"));
 
         var selectedTemplate = language switch
         {
             "🔷.NET" => manualTemplates,
-            "🐍 Python" => pythonTemplates.ToDictionary(
-                k => k.Key,
-                v => v.Value),
+            "🐍 Python" => pythonTemplates, 
+            "🦕 Node.js" => manualNodeTemplates, 
             _ => null
         };
         
@@ -207,20 +213,12 @@ while (true)
             }
             else if (selectedTemplate.TryGetValue(choice, out var selected))
             {
-                try
-                {
-                    selected.template.Generate(config.ProjectName, targetPath);
-                    AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {selected.fileName}[/]");
-                }
-                catch (Exception ex)
-                {
-                    AnsiConsole.MarkupLine($"[red]Error generating template: {ex.Message}[/]");
-                }
+                GenerateSafely(selected.template, config.ProjectName, targetPath, selected.fileName);
             }
         }
     }
     
-    AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automating CI/CD actions and check it yourself[/]");
+    AnsiConsole.MarkupLine("[bold red]WARNING!! Never trust CLI tools that automate CI/CD actions and check it yourself[/]");
 
     var generateDocker = AnsiConsole.Confirm("Would you also like to generate a Dockerfile?", false);
     if (generateDocker)
@@ -233,5 +231,18 @@ while (true)
             AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
             break;
         }
+    }
+}
+
+static void GenerateSafely(ITemplateGenerator template, string projectName, string path, string fileName)
+{
+    try
+    {
+        template.Generate(projectName, path);
+        AnsiConsole.MarkupLine($"[green]Successfully generated CI/CD {fileName}[/]");
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.MarkupLine($"[red]Error: {ex.Message}[/]");
     }
 }
