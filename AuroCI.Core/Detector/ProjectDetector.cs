@@ -48,6 +48,15 @@ public class ProjectDetector : IProjectDetector
                 config.ProjectType = DetectPythonType(requirements ?? pyprojFile!);
                 return config;
             }
+            
+            var packageJson =  Directory.GetFiles(path, "package.json").FirstOrDefault();
+
+            if (packageJson != null)
+            {
+                config.ProjectType = DetectNodeType(packageJson);
+                return config;
+            }
+            
             return config;
         }
         
@@ -82,5 +91,18 @@ public class ProjectDetector : IProjectDetector
         if (content.Contains("pandas") || content.Contains("numpy") || content.Contains("jupyter")) return "PythonDataScience";
         
         return "PythonScript";
+    }
+
+    private string DetectNodeType(string filePath)
+    {
+        var content = File.ReadAllText(filePath).ToLower();
+    
+        if (content.Contains("\"next\"")) return "NodeNext";
+        if (content.Contains("\"@nestjs/core\"")) return "NodeNest";
+        if (content.Contains("\"express\"")) return "NodeGeneral";
+        if (content.Contains("\"@angular/core\"")) return "NodeAngular";
+        if (content.Contains("\"vue\"")) return "NodeVue";
+    
+        return "NodeScript";
     }
 }

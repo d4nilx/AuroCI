@@ -1,6 +1,6 @@
 using AuroCI.Core.Interfaces;
 
-namespace AuroCI.Core.Templates.DotNet;
+namespace AuroCI.Core.Templates;
 
 public abstract class BaseTemplate : ITemplateGenerator
 {

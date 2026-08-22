@@ -73,4 +73,28 @@ public class DetectorTest
         var result = new ProjectDetector().Detect("/this/does/not/exist");
         Assert.Equal("Unknown", result.ProjectType);
     }
+    
+    [Theory]
+    [InlineData("\"next\":", "NodeNext")]
+    [InlineData("\"@angular/core\":", "NodeAngular")]
+    [InlineData("\"vue\":", "NodeVue")]
+    [InlineData("\"@nestjs/core\":", "NodeNest")]
+    [InlineData("\"express\":", "NodeGeneral")]
+    public void Detect_ProjectType_PackageJson_ReturnsCorrectType(string packageJsonContent, string expectedType)
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+        File.WriteAllText(Path.Combine(tempDir, "package.json"), $"{{ \"dependencies\": {{ {packageJsonContent} \"1.0.0\" }} }}");
+        var detect = new ProjectDetector();
+    
+        try
+        {
+            var result = detect.Detect(tempDir);
+            Assert.Equal(expectedType, result.ProjectType);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+        }
+    }
 }
