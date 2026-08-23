@@ -55,6 +55,6 @@ read -sp "🔑 Enter your NuGet API Key: " nuget_key
 echo ""
 
 echo "🚀 Pushing to NuGet.org..."
-dotnet nuget push ./packages/*.nupkg -k "$nuget_key" -s https://api.nuget.org/v3/index.json
+dotnet nuget push "./packages/AuroCI.*.nupkg" -k "$nuget_key" -s https://api.nuget.org/v3/index.json
 
 echo "✅ Package successfully published on NuGet!"

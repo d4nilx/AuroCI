@@ -68,6 +68,12 @@ That's it. AuroCI will detect your project type and generate the CI/CD pipeline 
 | FastAPI | `fastapi` in requirements.txt | Ubuntu only |
 | Python Script/Library | `requirements.txt` or `pyproject.toml` | Ubuntu, macOS, Windows |
 | Python Data Science | `pandas`/`numpy`/`jupyter` | Ubuntu only |
+| Node.js / Express | `express` in package.json | Ubuntu only |
+| NestJS | `@nestjs/core` in package.json | Ubuntu only |
+| Next.js | `next` in package.json | Ubuntu, macOS, Windows |
+| Angular | `@angular/core` in package.json | Ubuntu, macOS, Windows |
+| Vue.js | `vue` in package.json | Ubuntu, macOS, Windows |
+| Node.js Script | `package.json` | Ubuntu, macOS, Windows |
 
 ---
 
@@ -98,6 +104,8 @@ AuroCI.sln
 |           |    ├── FastApiTemplate.cs
 |           |    ├── FlaskTemplate.cs
 |           |    └── PythonScriptTemplate.cs
+│           ├── Node/
+│           |    └── NodeTemplate.cs
 │           └──DockerTemplate.cs
 │ 
 ├── AuroCI.CLI/                 # UI layer — terminal interface
@@ -157,7 +165,8 @@ AuroCI.sln
 - [x] Manual template fallback for undetected projects
 - [x] Dockerfile generation with .dockerignore support
 - [x] Python support (Flask, Django, FastAPI, Data Science, Script)
-- [ ] Support for other languages (Node.js, Go)
+- [x] Node.js support (Express, NestJS, Next.js, Angular, Vue, Script)
+- [ ] Support for other languages (Go, Java)
 - [ ] Custom template configuration via `auroci.json`
 
 ---
