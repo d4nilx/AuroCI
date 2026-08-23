@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/assets/header.svg" alt="AuroCI Logo">
+  <img src=".github/assets/header2.svg" alt="AuroCI Logo">
 </p>
 
 > A smart, interactive CLI tool for automated CI/CD pipeline generation — because writing YAML by hand is so 2020.

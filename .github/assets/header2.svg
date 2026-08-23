@@ -1,0 +1,66 @@
+<svg width="1400" height="420" viewBox="0 0 1400 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#05070B"/>
+      <stop offset="0.52" stop-color="#07111D"/>
+      <stop offset="1" stop-color="#03050A"/>
+    </linearGradient>
+    <radialGradient id="cyanGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(350 175) rotate(18) scale(520 260)">
+      <stop stop-color="#00F2FF" stop-opacity="0.34"/>
+      <stop offset="0.45" stop-color="#00B8FF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#00B8FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blueGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1090 260) rotate(-18) scale(490 260)">
+      <stop stop-color="#4364F7" stop-opacity="0.30"/>
+      <stop offset="0.48" stop-color="#4364F7" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#4364F7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line" x1="180" y1="0" x2="1220" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00F2FF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#00F2FF" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#4364F7" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur40" x="-100" y="-100" width="1600" height="620" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+    <filter id="blur12" x="-40" y="-40" width="1480" height="500" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" stroke="#FFFFFF" stroke-opacity="0.028" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1400" height="420" rx="28" fill="url(#bg)"/>
+  <rect width="1400" height="420" rx="28" fill="url(#grid)"/>
+
+  <ellipse cx="350" cy="175" rx="440" ry="210" fill="url(#cyanGlow)" filter="url(#blur40)"/>
+  <ellipse cx="1090" cy="260" rx="430" ry="210" fill="url(#blueGlow)" filter="url(#blur40)"/>
+
+  <g opacity="0.65" filter="url(#blur12)">
+    <path d="M120 315C300 245 420 215 610 215C760 215 910 245 1280 125" stroke="#00F2FF" stroke-opacity="0.16" stroke-width="2"/>
+    <path d="M130 340C360 275 460 250 690 252C850 254 1030 232 1280 155" stroke="#4364F7" stroke-opacity="0.14" stroke-width="2"/>
+  </g>
+
+  <path d="M160 329H1240" stroke="url(#line)" stroke-width="1"/>
+
+  <g fill="#FFFFFF">
+    <circle cx="196" cy="72" r="1.7" fill-opacity="0.55"/>
+    <circle cx="294" cy="310" r="1.3" fill-opacity="0.35"/>
+    <circle cx="1168" cy="78" r="1.4" fill-opacity="0.5"/>
+    <circle cx="1218" cy="292" r="1.8" fill-opacity="0.35"/>
+    <circle cx="1032" cy="115" r="1.2" fill-opacity="0.38"/>
+    <circle cx="412" cy="107" r="1.1" fill-opacity="0.38"/>
+  </g>
+
+  <g transform="translate(700 135)">
+    <circle cx="0" cy="0" r="42" stroke="#00F2FF" stroke-opacity="0.16" stroke-width="1"/>
+    <circle cx="0" cy="0" r="60" stroke="#4364F7" stroke-opacity="0.08" stroke-width="1"/>
+    <path d="M-18 -20L0 -30L18 -20V1C18 18 8 28 0 33C-8 28-18 18-18 1V-20Z" fill="#FFFFFF" fill-opacity="0.035" stroke="#00F2FF" stroke-opacity="0.35"/>
+    <path d="M-9 1L-1 9L13 -8" stroke="#00F2FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="700" y="225" text-anchor="middle" fill="#FFFFFF" fill-opacity="0.98" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="64" font-weight="700" letter-spacing="10">AuroCI</text>
+  <text x="700" y="266" text-anchor="middle" fill="#B8C7D9" fill-opacity="0.82" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" letter-spacing="4">AUTOMATE YOUR CI/CD WORKFLOW</text>
+  <text x="700" y="305" text-anchor="middle" fill="#00F2FF" fill-opacity="0.72" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" letter-spacing="3">SMART · FAST · ZERO CONFIGURATION</text>
+</svg>
