@@ -50,10 +50,10 @@ public class NodeTemplate : BaseTemplate
                       run: npm ci
 
                     - name: Run tests
-                    run: npm run test --if-present
+                      run: npm run test --if-present
                 
                     - name: Build for production
-                    run: npm run build --if-present
+                      run: npm run build --if-present
                       
                     - name: Upload Artifact
                       uses: actions/upload-artifact@v4
