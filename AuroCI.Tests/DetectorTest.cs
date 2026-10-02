@@ -5,6 +5,9 @@ namespace AuroCI.Tests;
 // ===== Fixture =====
 public class TempDirectoryFixture : IDisposable
 {
+    /// <summary>
+    /// The path to the temporary directory.
+    /// </summary>
     public string Path { get; } =
         System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
 

@@ -38,6 +38,14 @@ var nodeTemplates = new Dictionary<string, (ITemplateGenerator template, string 
     ["NodeNest"]    = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
 };
 
+var rustTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["RustGeneral"] = (new ClassTemplate(), "rust-cicd.yml"),
+    ["RustLibrary"] = (new RustLibrary(), "rust-library-cicd.yml"),
+    ["RustCLI"]     = (new RustCli(), "rust-cli.yml"),
+    ["RustWeb"]     = (new RustWeb(), "rust-web-cicd.yml")
+};
+
 var manualTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
     ["🌐 ASP.NET Core Web"]  = (new WebTemplate(), "web-ci.yml"),
@@ -58,6 +66,14 @@ var manualNodeTemplates = new Dictionary<string, (ITemplateGenerator template, s
     ["🅰️ Angular"]          = (new NodeTemplate(NodeProjectType.Angular), "angular-cicd.yml"),
     ["🖖 Vue.js"]           = (new NodeTemplate(NodeProjectType.Vue),     "vue-cicd.yml"),
     ["🦁 NestJS"]           = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
+};
+
+var manualRustTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["🦀 General Rust"] = (new ClassTemplate(), "rust-cicd.yml"),
+    ["💻 Rust CLI"]     = (new RustCli(), "rust-cli.yml"),
+    ["🦀 Rust Web"]     = (new RustWeb(), "rust-web-cicd.yml"),
+    ["📚 Rust Library"] = (new RustLibrary(), "rust-library-cicd.yml")
 };
 
 // Main program cycle
@@ -93,6 +109,11 @@ while (true)
         if (selectionMode == "Enter the path manually")
         {
             targetPath = AnsiConsole.Ask<string>("What is the project path?");
+            if (targetPath == "exit")
+            {
+                AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+                return;
+            }
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
 
             if (!Directory.Exists(Path.GetFullPath(targetPath)))
@@ -182,13 +203,14 @@ while (true)
 
         var language = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold green]Which language to use?[/]")
-            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "❌ Exit"));
+            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "Rust", "❌ Exit"));
 
         var selectedTemplate = language switch
         {
             "🔷.NET" => manualTemplates,
             "🐍 Python" => pythonTemplates, 
             "🦕 Node.js" => manualNodeTemplates, 
+            "Rust" => manualRustTemplates,
             _ => null
         };
         
