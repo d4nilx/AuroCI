@@ -1,5 +1,7 @@
 using AuroCI.Core.Templates;
 
+namespace AuroCI.Core.Templates.Rust;
+
 public class RustLibrary : BaseTemplate
 {
     public override string Name => "rust-library.yml";

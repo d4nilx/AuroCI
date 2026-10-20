@@ -1,5 +1,7 @@
 using AuroCI.Core.Templates;
 
+namespace AuroCI.Core.Templates.Rust;
+
 public class RustCli : BaseTemplate
 {
     public override string Name => "rust-cli.yml";

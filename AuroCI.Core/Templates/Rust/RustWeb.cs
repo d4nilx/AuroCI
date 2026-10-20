@@ -1,5 +1,7 @@
 using AuroCI.Core.Templates;
 
+namespace AuroCI.Core.Templates.Rust;
+
 public class RustWeb : BaseTemplate
 {
     public override string Name => "rust-web-cicd.yml";

@@ -6,6 +6,7 @@ using AuroCI.Core.Interfaces;
 using AuroCI.Core.Templates.DotNet;
 using AuroCI.Core.Templates.Python;
 using AuroCI.Core.Templates.Node; 
+using AuroCI.Core.Templates.Rust;
 
 var templates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
@@ -17,7 +18,7 @@ var templates = new Dictionary<string, (ITemplateGenerator template, string file
     ["WinForms"]     = (new WinFormsTemplate(),     "winforms-ci.yml"),
     ["BlazorWASM"]   = (new BlazorTemplate(),       "blazor-ci.yml"),
     ["ClassLibrary"] = (new ClassLibraryTemplate(), "classlib-ci.yml"),
-    ["Worker"]       = (new WorkerTemplate(),       "worker-ci.yml"),
+    ["Worker"]       = (new WorkerTemplate(),       "worker-ci.yml")
 };
 
 var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
@@ -187,6 +188,10 @@ while (true)
     {
         GenerateSafely(nodeEntry.template, config.ProjectName, targetPath, nodeEntry.fileName);
     }
+    else if (rustTemplates.TryGetValue(config.ProjectType, out var rustEntry))
+    {
+        GenerateSafely(rustEntry.template, config.ProjectName, targetPath, rustEntry.fileName);
+    }
     else
     {
         AnsiConsole.MarkupLine("[yellow]Be careful: Project type not recognized. Please choose a template manually.[/]");
@@ -203,14 +208,14 @@ while (true)
 
         var language = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold green]Which language to use?[/]")
-            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "Rust", "❌ Exit"));
+            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "🦀Rust", "❌ Exit"));
 
         var selectedTemplate = language switch
         {
             "🔷.NET" => manualTemplates,
             "🐍 Python" => pythonTemplates, 
             "🦕 Node.js" => manualNodeTemplates, 
-            "Rust" => manualRustTemplates,
+            "🦀Rust" => manualRustTemplates,
             _ => null
         };
         
@@ -246,16 +251,15 @@ while (true)
     if (generateDocker)
     {
         DockerHelper.TryGenerateDockerfile(config.ProjectName, targetPath, config.ProjectType);
+    }
 
-        var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
-        if (!doAnother)
-        {
-            AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
-            break;
-        }
+    var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
+    if (!doAnother)
+    {
+        AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+        break;
     }
 }
-
 static void GenerateSafely(ITemplateGenerator template, string projectName, string path, string fileName)
 {
     try
