@@ -6,6 +6,7 @@ using AuroCI.Core.Interfaces;
 using AuroCI.Core.Templates.DotNet;
 using AuroCI.Core.Templates.Python;
 using AuroCI.Core.Templates.Node; 
+using AuroCI.Core.Templates.Rust;
 
 var templates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
 {
@@ -17,7 +18,7 @@ var templates = new Dictionary<string, (ITemplateGenerator template, string file
     ["WinForms"]     = (new WinFormsTemplate(),     "winforms-ci.yml"),
     ["BlazorWASM"]   = (new BlazorTemplate(),       "blazor-ci.yml"),
     ["ClassLibrary"] = (new ClassLibraryTemplate(), "classlib-ci.yml"),
-    ["Worker"]       = (new WorkerTemplate(),       "worker-ci.yml"),
+    ["Worker"]       = (new WorkerTemplate(),       "worker-ci.yml")
 };
 
 var pythonTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
@@ -36,6 +37,14 @@ var nodeTemplates = new Dictionary<string, (ITemplateGenerator template, string 
     ["NodeAngular"] = (new NodeTemplate(NodeProjectType.Angular), "angular-cicd.yml"),
     ["NodeVue"]     = (new NodeTemplate(NodeProjectType.Vue),     "vue-cicd.yml"),
     ["NodeNest"]    = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
+};
+
+var rustTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["RustGeneral"] = (new ClassTemplate(), "rust-cicd.yml"),
+    ["RustLibrary"] = (new RustLibrary(), "rust-library-cicd.yml"),
+    ["RustCLI"]     = (new RustCli(), "rust-cli.yml"),
+    ["RustWeb"]     = (new RustWeb(), "rust-web-cicd.yml")
 };
 
 var manualTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
@@ -58,6 +67,14 @@ var manualNodeTemplates = new Dictionary<string, (ITemplateGenerator template, s
     ["🅰️ Angular"]          = (new NodeTemplate(NodeProjectType.Angular), "angular-cicd.yml"),
     ["🖖 Vue.js"]           = (new NodeTemplate(NodeProjectType.Vue),     "vue-cicd.yml"),
     ["🦁 NestJS"]           = (new NodeTemplate(NodeProjectType.Nest),    "nest-cicd.yml")
+};
+
+var manualRustTemplates = new Dictionary<string, (ITemplateGenerator template, string fileName)>
+{
+    ["🦀 General Rust"] = (new ClassTemplate(), "rust-cicd.yml"),
+    ["💻 Rust CLI"]     = (new RustCli(), "rust-cli.yml"),
+    ["🦀 Rust Web"]     = (new RustWeb(), "rust-web-cicd.yml"),
+    ["📚 Rust Library"] = (new RustLibrary(), "rust-library-cicd.yml")
 };
 
 // Main program cycle
@@ -93,6 +110,11 @@ while (true)
         if (selectionMode == "Enter the path manually")
         {
             targetPath = AnsiConsole.Ask<string>("What is the project path?");
+            if (targetPath == "exit")
+            {
+                AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+                return;
+            }
             if (targetPath == ".") targetPath = Directory.GetCurrentDirectory();
 
             if (!Directory.Exists(Path.GetFullPath(targetPath)))
@@ -166,6 +188,10 @@ while (true)
     {
         GenerateSafely(nodeEntry.template, config.ProjectName, targetPath, nodeEntry.fileName);
     }
+    else if (rustTemplates.TryGetValue(config.ProjectType, out var rustEntry))
+    {
+        GenerateSafely(rustEntry.template, config.ProjectName, targetPath, rustEntry.fileName);
+    }
     else
     {
         AnsiConsole.MarkupLine("[yellow]Be careful: Project type not recognized. Please choose a template manually.[/]");
@@ -182,13 +208,14 @@ while (true)
 
         var language = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("[bold green]Which language to use?[/]")
-            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "❌ Exit"));
+            .AddChoices("🔷.NET", "🐍 Python", "🦕 Node.js", "🦀Rust", "❌ Exit"));
 
         var selectedTemplate = language switch
         {
             "🔷.NET" => manualTemplates,
             "🐍 Python" => pythonTemplates, 
             "🦕 Node.js" => manualNodeTemplates, 
+            "🦀Rust" => manualRustTemplates,
             _ => null
         };
         
@@ -224,16 +251,15 @@ while (true)
     if (generateDocker)
     {
         DockerHelper.TryGenerateDockerfile(config.ProjectName, targetPath, config.ProjectType);
+    }
 
-        var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
-        if (!doAnother)
-        {
-            AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
-            break;
-        }
+    var doAnother = AnsiConsole.Confirm("\nDo you want to process another project?", false);
+    if (!doAnother)
+    {
+        AnsiConsole.Write(new Rule("[bold grey]See ya 😉[/]"));
+        break;
     }
 }
-
 static void GenerateSafely(ITemplateGenerator template, string projectName, string path, string fileName)
 {
     try
